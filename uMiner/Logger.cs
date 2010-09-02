@@ -64,6 +64,11 @@ namespace uMiner
             switch (type)
             {
                 case LogType.Info:
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("[" + type.ToString() + "] ");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    break;
+                case LogType.Warning:
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.Write("[" + type.ToString() + "] ");
                     Console.ForegroundColor = ConsoleColor.Gray;
@@ -84,6 +89,7 @@ namespace uMiner
         public enum LogType
         {
             Info,
+            Warning,
             Error
         }
     }

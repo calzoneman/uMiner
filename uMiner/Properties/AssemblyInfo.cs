@@ -1,4 +1,13 @@
-﻿using System.Reflection;
+﻿/**
+ * uMiner - A lightweight custom Minecraft Classic server written in C#
+ * Copyright 2010 Calvin "calzoneman" Montgomery
+ * 
+ * Licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License
+ * (see http://creativecommons.org/licenses/by-sa/3.0/, or LICENSE.txt for a full license
+ */
+
+
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -6,11 +15,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("uMiner")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A lightly featured Minecraft Classic server written in C#")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Hewlett-Packard Company")]
+[assembly: AssemblyCompany("CzTech")]
 [assembly: AssemblyProduct("uMiner")]
-[assembly: AssemblyCopyright("Copyright © Hewlett-Packard Company 2010")]
+[assembly: AssemblyCopyright("Copyright © calzoneman 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
