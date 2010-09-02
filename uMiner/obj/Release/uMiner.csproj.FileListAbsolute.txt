@@ -1,0 +1,5 @@
+C:\Users\DealTree\AppData\Local\Temporary Projects\uMiner\bin\Release\uMiner.exe
+C:\Users\DealTree\AppData\Local\Temporary Projects\uMiner\bin\Release\uMiner.pdb
+C:\Users\DealTree\AppData\Local\Temporary Projects\uMiner\obj\Release\ResolveAssemblyReference.cache
+C:\Users\DealTree\AppData\Local\Temporary Projects\uMiner\obj\Release\uMiner.exe
+C:\Users\DealTree\AppData\Local\Temporary Projects\uMiner\obj\Release\uMiner.pdb

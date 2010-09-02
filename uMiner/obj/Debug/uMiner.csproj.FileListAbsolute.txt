@@ -1,0 +1,10 @@
+C:\Users\DealTree\AppData\Local\Temporary Projects\uMiner\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\DealTree\AppData\Local\Temporary Projects\uMiner\bin\Debug\uMiner.exe
+C:\Users\DealTree\AppData\Local\Temporary Projects\uMiner\bin\Debug\uMiner.pdb
+C:\Users\DealTree\AppData\Local\Temporary Projects\uMiner\obj\Debug\uMiner.exe
+C:\Users\DealTree\AppData\Local\Temporary Projects\uMiner\obj\Debug\uMiner.pdb
+C:\Users\DealTree\Documents\Visual Studio 2008\Projects\uMiner\uMiner\obj\Debug\uMiner.exe
+C:\Users\DealTree\Documents\Visual Studio 2008\Projects\uMiner\uMiner\obj\Debug\uMiner.pdb
+C:\Users\DealTree\Documents\Visual Studio 2008\Projects\uMiner\uMiner\bin\Debug\uMiner.exe
+C:\Users\DealTree\Documents\Visual Studio 2008\Projects\uMiner\uMiner\bin\Debug\uMiner.pdb
+C:\Users\DealTree\Documents\Visual Studio 2008\Projects\uMiner\uMiner\obj\Debug\ResolveAssemblyReference.cache
