@@ -8,23 +8,21 @@ using System.Text;
 
 namespace uMiner
 {
-    class Heartbeat
+    public class Heartbeat
     {
         BeatType beatType;
-        Server server;
-        public Heartbeat(BeatType bType, ref Server serv)
+        public Heartbeat(BeatType bType)
         {
             this.beatType = bType;
-            this.server = serv;
         }
-        public bool Beat()
+        public bool Beat(bool initial)
         {
             if (beatType == BeatType.Minecraft)
             {
                 try
                 {
                     HttpWebRequest beatRequest = (HttpWebRequest)WebRequest.Create(new Uri("http://www.minecraft.net/heartbeat.jsp"));
-                    string args = "port=" + server.port + "&max=" + server.maxPlayers + "&name=" + Uri.EscapeUriString(server.serverName) + "&public=True" + "&version=" + Protocol.version + "&salt=aaaaaaaaaaaaaaaa&users=" + server.plyCount;
+                    string args = "port=" + Program.server.port + "&max=" + Program.server.maxPlayers + "&name=" + Uri.EscapeUriString(Program.server.serverName) + "&public=True" + "&version=" + Protocol.version + "&salt=aaaaaaaaaaaaaaaa&users=" + Program.server.plyCount;
                     beatRequest.Method = "POST";
                     beatRequest.ContentType = "application/x-www-form-urlencoded";
                     beatRequest.ContentLength = args.Length;
@@ -36,13 +34,19 @@ namespace uMiner
                     {
                         byte[] responseBytes = new byte[73]; //URL should be 73 characters long
                         responseStream.Read(responseBytes, 0, 73);
-                        Console.WriteLine("Received URL: " + Encoding.ASCII.GetString(responseBytes));
+                        if (initial)
+                        {
+                            Program.server.logger.log("Received URL: " + Encoding.ASCII.GetString(responseBytes));
+                            StreamWriter fileWriter = new StreamWriter(File.OpenWrite("externalurl.txt"));
+                            fileWriter.Write(Encoding.ASCII.GetString(responseBytes));
+                            fileWriter.Close();
+                        }
                     }
                 }
                 catch(Exception e)
                 {
-                    Console.WriteLine("Error occurred during heartbeat: ");
-                    Console.WriteLine(e.Message + "\n"  + e.StackTrace);
+                    Program.server.logger.log("Error occurred during heartbeat: ", Logger.LogType.Error);
+                    Program.server.logger.log(e);
                     return false;
                 }
                 return true;

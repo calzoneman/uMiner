@@ -5,16 +5,18 @@ using System.Text;
 
 namespace uMiner
 {
-    class Program
+    public class Program
     {
+        public static Server server = new Server(ServerType.POC);
         static void Main(string[] args)
         {
-            Server.s.Run();
+            server.Init();
+            server.Run();
         }
     }
 
     public enum ServerType
     {
-        POC
+        POC // Proof Of Concept
     }
 }
