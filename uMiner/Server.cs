@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -20,16 +21,20 @@ namespace uMiner
     {
         //Default values
         public int plyCount = 0;
-        public int maxPlayers = 0;
+        public int maxPlayers = 2;
         public int salt = new Random().Next();
         public string serverName = "uMinerServer";
         public string motd = "In Development";
         public const int protocolVersion = Protocol.version;
         public bool isPublic = true;
         public int port = 25565;
+        public bool running = true;
         
         //Players
         public List<Player> playerlist = new List<Player>();
+
+        //Ranks
+        public Dictionary<string, byte> playerRanksDict;
 
         //TcpListener
         public TcpListener listener;
@@ -55,6 +60,33 @@ namespace uMiner
             //Load config
             playerlist.Capacity = maxPlayers;
             //Load ranks
+            playerRanksDict = new Dictionary<string, byte>();
+            try
+            {
+                if (File.Exists("ranks.txt"))
+                {
+                    StreamReader sr = new StreamReader(File.OpenRead("ranks.txt"));
+                    while (!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine();
+                        if (line != null && !line.Equals("") && line.IndexOf(':') >= 0)
+                        {
+                            string user = line.Substring(0, line.IndexOf(':'));
+                            byte rank = byte.Parse(line.Substring(line.IndexOf(':') + 1));
+                            playerRanksDict.Add(user, rank);
+                        }
+                    }
+                    sr.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                logger.log("FATAL ERROR WHILE LOADING RANKS", Logger.LogType.Error);
+                logger.log(e);
+                running = false;
+                return;
+            }
+            logger.log("Loaded ranks from ranks.txt");
             //etc
             
             //Init heartbeat
@@ -90,21 +122,8 @@ namespace uMiner
         {
             while(true)  //Main Loop
             {
-                //Process player buffers
-                for(int i = 0; i < playerlist.Count; i++)
-                {
-                    Player p = playerlist[i];
-                    if (p.readSize == 0)
-                    {
-                        p.readSize++;
-                        p.socket.Receive(p.buffer, 1, SocketFlags.None);
-                        int length = Protocol.incomingPacketLengths[p.buffer[0]];
-                        p.readSize += p.socket.Receive(p.buffer, 1, length - 1, SocketFlags.None);
-                        p.Process();
-                    }
-                }
-                //Give it a rest
-                System.Threading.Thread.Sleep(100);
+                if (!running) { return; }
+                System.Threading.Thread.Sleep(10);
             }
         }
                 
@@ -121,6 +140,26 @@ namespace uMiner
             {
                 logger.log(e);
             }
+        }
+
+        public void saveRanks()
+        {
+            try
+            {
+                StreamWriter sw = new StreamWriter(File.Open("ranks.txt", FileMode.OpenOrCreate, FileAccess.Write));
+                foreach (KeyValuePair<string, byte> k in this.playerRanksDict)
+                {
+                    sw.WriteLine(k.Key + ":" + k.Value.ToString());
+                }
+                sw.Close();
+            }
+            catch (Exception e)
+            {
+                logger.log("Exception occurred while saving ranks", Logger.LogType.Error);
+                logger.log(e);
+                return;
+            }
+            logger.log("Saved ranks to ranks.txt");
         }
     }
 }

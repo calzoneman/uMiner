@@ -17,6 +17,6 @@ namespace uMiner
     class Protocol
     {
         public const int version = 7;
-        public static int[] incomingPacketLengths = { 131, 0, 0, 0, 0, 9, 0, 0, 10, 0, 0, 66 };
+        public static int[] incomingPacketLengths = { 131, 0, 0, 0, 0, 9, 0, 0, 10, 0, 0, 0, 0, 66 };
     }
 }

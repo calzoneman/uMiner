@@ -64,6 +64,7 @@ namespace uMiner
             switch (type)
             {
                 case LogType.Info:
+                case LogType.Chat:
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write("[" + type.ToString() + "] ");
                     Console.ForegroundColor = ConsoleColor.Gray;
@@ -90,7 +91,8 @@ namespace uMiner
         {
             Info,
             Warning,
-            Error
+            Error,
+            Chat
         }
     }
 }

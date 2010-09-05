@@ -31,7 +31,7 @@ namespace uMiner
                 try
                 {
                     HttpWebRequest beatRequest = (HttpWebRequest)WebRequest.Create(new Uri("http://www.minecraft.net/heartbeat.jsp"));
-                    string args = "port=" + Program.server.port + "&max=" + Program.server.maxPlayers + "&name=" + Uri.EscapeUriString(Program.server.serverName) + "&public=True" + "&version=" + Protocol.version + "&salt=aaaaaaaaaaaaaaaa&users=" + Program.server.plyCount;
+                    string args = "port=" + Program.server.port + "&max=" + Program.server.maxPlayers + "&name=" + Uri.EscapeUriString(Program.server.serverName) + "&public=False" + "&version=" + Protocol.version + "&salt=aaaaaaaaaaaaaaaa&users=" + Program.server.plyCount;
                     beatRequest.Method = "POST";
                     beatRequest.ContentType = "application/x-www-form-urlencoded";
                     beatRequest.ContentLength = args.Length;
