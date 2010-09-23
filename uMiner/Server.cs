@@ -9,29 +9,35 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace uMiner
 {
     public class Server
     {
-        //Default values
+        //Default config values
         public int plyCount = 0;
-        public int maxPlayers = 2;
-        public int salt = new Random().Next();
+        public int maxPlayers = 3;
         public string serverName = "uMinerServer";
         public string motd = "In Development";
-        public const int protocolVersion = Protocol.version;
         public bool isPublic = true;
         public int port = 25565;
+        public bool verify_names = true;
+        
+        //Server stuff
+        public int salt = new Random().Next();
+        public const int protocolVersion = Protocol.version;
         public bool running = true;
         
         //Players
-        public List<Player> playerlist = new List<Player>();
+        public Player[] playerlist;
+
+        //Map
+        public World world;
+        public System.Timers.Timer worldSaveTimer;
 
         //Ranks
         public Dictionary<string, byte> playerRanksDict;
@@ -58,7 +64,12 @@ namespace uMiner
         {
             logger.log("Server initialized");
             //Load config
-            playerlist.Capacity = maxPlayers;
+            playerlist = new Player[maxPlayers + 1];  //Extra slot is for rejects
+            for (int i = 0; i < maxPlayers + 1; i++)
+            {
+                playerlist[i] = null;
+            }
+
             //Load ranks
             playerRanksDict = new Dictionary<string, byte>();
             try
@@ -81,7 +92,7 @@ namespace uMiner
             }
             catch (Exception e)
             {
-                logger.log("FATAL ERROR WHILE LOADING RANKS", Logger.LogType.Error);
+                logger.log("Error while loading ranks:", Logger.LogType.Error);
                 logger.log(e);
                 running = false;
                 return;
@@ -89,21 +100,22 @@ namespace uMiner
             logger.log("Loaded ranks from ranks.txt");
             //etc
             
-            //Init heartbeat
+            //Initialize heartbeat timer
             heartbeatTimer.Elapsed += new System.Timers.ElapsedEventHandler(delegate
-            {
-                beater.Beat(false);
-            });
+                {
+                    beater.Beat(false);
+                });
             heartbeatTimer.Start();
             beater.Beat(true);  //Initial heartbeat
-
+            
+            //Start TCP listener thread
             this.ListenThread = new System.Threading.Thread( new System.Threading.ThreadStart( delegate
                 {
                     this.listener = new TcpListener(IPAddress.Any, this.port);
                     try
                     {
                         listener.Start();
-                        listener.BeginAcceptSocket(new AsyncCallback(SocketAccept), null);
+                        listener.BeginAcceptTcpClient(new AsyncCallback(ClientAccept), null);
                     }
                     catch(Exception e)
                     {
@@ -112,14 +124,30 @@ namespace uMiner
                     }
                     logger.log("Started listener thread");
                 }));
+            this.ListenThread.IsBackground = true;
             this.ListenThread.Start();
-                    
 
         }
 
 
         public void Run()
         {
+            if (!File.Exists("maps/default.umw"))
+            {
+                world = new World(64, 64, 64);
+                world.Save();
+            }
+            else
+            {
+                world = new World("default.umw");
+                world.Save();
+            }
+            worldSaveTimer = new System.Timers.Timer(60000.0);
+            worldSaveTimer.Elapsed += new System.Timers.ElapsedEventHandler(delegate
+                {
+                    world.Save();
+                });
+            worldSaveTimer.Start();
             while(true)  //Main Loop
             {
                 if (!running) { return; }
@@ -127,14 +155,23 @@ namespace uMiner
             }
         }
                 
-        public void SocketAccept(IAsyncResult result)
+        public void ClientAccept(IAsyncResult result) //Accepts TCP connections and assigns them to players
         {
             try
             {
-                Socket sock = listener.EndAcceptSocket(result);
-                logger.log("Accepted socket from " + sock.RemoteEndPoint.ToString(), Logger.LogType.Info);
-                playerlist.Add(new Player(sock));
-                listener.BeginAcceptSocket(new AsyncCallback(SocketAccept), null);
+                TcpClient client = listener.EndAcceptTcpClient(result);
+                string ip = ((IPEndPoint)(client.Client.RemoteEndPoint)).Address.ToString();
+                logger.log("Accepted socket from " + ip, Logger.LogType.Info);
+                
+                for (int i = 0; i < playerlist.Length; i++)
+                {
+                    if (playerlist[i] == null)
+                    {
+                        playerlist[i] = new Player(client, ip, (byte)i);
+                        break;
+                    }
+                }
+                listener.BeginAcceptTcpClient(new AsyncCallback(ClientAccept), null);
             }
             catch (Exception e)
             {

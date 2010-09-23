@@ -9,9 +9,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -30,7 +29,7 @@ namespace uMiner
             {
                 try
                 {
-                    HttpWebRequest beatRequest = (HttpWebRequest)WebRequest.Create(new Uri("http://www.minecraft.net/heartbeat.jsp"));
+                    HttpWebRequest beatRequest = (HttpWebRequest)WebRequest.Create(new Uri("http://minecraft.net/heartbeat.jsp"));
                     string args = "port=" + Program.server.port + "&max=" + Program.server.maxPlayers + "&name=" + Uri.EscapeUriString(Program.server.serverName) + "&public=False" + "&version=" + Protocol.version + "&salt=aaaaaaaaaaaaaaaa&users=" + Program.server.plyCount;
                     beatRequest.Method = "POST";
                     beatRequest.ContentType = "application/x-www-form-urlencoded";
@@ -52,10 +51,17 @@ namespace uMiner
                         }
                     }
                 }
-                catch(Exception e)
+                catch (WebException)
+                {
+                    Program.server.logger.log("Unable to make heartbeat", Logger.LogType.Warning);
+                    Program.server.verify_names = false;
+                    return false;
+                }
+                catch (Exception e)
                 {
                     Program.server.logger.log("Error occurred during heartbeat: ", Logger.LogType.Error);
                     Program.server.logger.log(e);
+                    Program.server.verify_names = false;
                     return false;
                 }
                 return true;

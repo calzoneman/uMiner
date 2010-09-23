@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace uMiner
@@ -54,8 +53,25 @@ namespace uMiner
                 case 16:
                     return "&f";
                 case 128:
-                    return "&1";
+                    return "&9";
                 case 255:
+                    return "&4";
+                default:
+                    return "&7";
+            }
+        }
+
+        public static string GetColor(string rankName)
+        {
+            switch (rankName)
+            {
+                case "guest":
+                    return "&7";
+                case "player":
+                    return "&f";
+                case "operator":
+                    return "&9";
+                case "owner":
                     return "&4";
                 default:
                     return "&7";
