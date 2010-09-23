@@ -491,7 +491,7 @@ namespace uMiner
                 mapFinal.Append(w.height);
                 this.SendPacket(mapFinal);
 
-                //Spawn player
+                //Spawn player (convert map coordinates to player coordinates and set player pos)
                 this.x = (short)(w.spawnx * 32 + 16);
                 this.y = (short)(w.spawny * 32);
                 this.z = (short)(w.spawnz * 32 + 16);
