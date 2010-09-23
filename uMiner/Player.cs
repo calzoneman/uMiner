@@ -126,6 +126,7 @@ namespace uMiner
                                 break;
                             default:
                                 Program.server.logger.log("Unhandled packet type \"" + opcode + "\"", Logger.LogType.Warning);
+                                Kick("Unknown packet type", false);
                                 break;
                         }
                     }
@@ -370,6 +371,7 @@ namespace uMiner
         {
             try
             {
+                if (!loggedIn) { silent = true; }
                 if (!this.plyClient.Connected) //Oops
                 {
                     Program.server.logger.log("Player " + username + " has already disconnected.", Logger.LogType.Warning);
