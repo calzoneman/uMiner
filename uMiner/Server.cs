@@ -21,14 +21,16 @@ namespace uMiner
         //Default config values
         public int plyCount = 0;
         public int maxPlayers = 3;
-        public string serverName = "uMinerServer";
-        public string motd = "In Development";
+        public string serverName = "uMiner Server";
+        public string motd = "Welcome to my uMiner Server!";
+        public string worldPath = "default.umw";
         public bool isPublic = true;
         public int port = 25565;
         public bool verify_names = true;
         
         //Server stuff
-        public int salt = new Random().Next();
+        public string salt;
+
         public const int protocolVersion = Protocol.version;
         public bool running = true;
         
@@ -63,12 +65,45 @@ namespace uMiner
         public void Init()
         {
             logger.log("Server initialized");
+            //Init salt
+            string saltChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.~";
+            Random rand = new Random();
+            int saltLength = rand.Next(12, 16);
+            for (int i = 0; i < saltLength; i++)
+            {
+                salt += saltChars[rand.Next(0, saltChars.Length - 1)];
+            }
+
             //Load config
             playerlist = new Player[maxPlayers + 1];  //Extra slot is for rejects
             for (int i = 0; i < maxPlayers + 1; i++)
             {
                 playerlist[i] = null;
             }
+            LoadConfig();
+
+            //Load world and start save timer
+            if (!File.Exists("maps/" + worldPath))
+            {
+                world = new World(64, 64, 64);
+                world.Save();
+            }
+            else
+            {
+                world = new World(worldPath);
+                world.Save();
+            }
+            worldSaveTimer = new System.Timers.Timer(60000.0);
+            worldSaveTimer.Elapsed += new System.Timers.ElapsedEventHandler(delegate
+            {
+                world.Save();
+            });
+
+            Console.CancelKeyPress += new ConsoleCancelEventHandler(delegate
+                {
+                    world.Save();
+                });
+            
 
             //Load ranks
             playerRanksDict = new Dictionary<string, byte>();
@@ -132,21 +167,6 @@ namespace uMiner
 
         public void Run()
         {
-            if (!File.Exists("maps/default.umw"))
-            {
-                world = new World(64, 64, 64);
-                world.Save();
-            }
-            else
-            {
-                world = new World("default.umw");
-                world.Save();
-            }
-            worldSaveTimer = new System.Timers.Timer(60000.0);
-            worldSaveTimer.Elapsed += new System.Timers.ElapsedEventHandler(delegate
-                {
-                    world.Save();
-                });
             worldSaveTimer.Start();
             while(true)  //Main Loop
             {
@@ -197,6 +217,71 @@ namespace uMiner
                 return;
             }
             logger.log("Saved ranks to ranks.txt");
+        }
+
+        public void LoadConfig()
+        {
+            try
+            {
+                if (File.Exists("server.cfg"))
+                {
+                    StreamReader cfgReader = new StreamReader(File.OpenRead("server.cfg"));
+                    while (!cfgReader.EndOfStream)
+                    {
+                        string line = cfgReader.ReadLine();
+                        if (line.Replace(" ", "")[0] == '#') { continue; }
+                        string field = line.Substring(0, line.IndexOf('=')).Trim();
+                        string arg = line.Substring(line.IndexOf('=') + 1).Trim();
+                        if (arg.Contains("#")) { arg = arg.Substring(0, arg.IndexOf("#")); }
+                        switch (field)
+                        {
+                            case "server-name":
+                                this.serverName = arg;
+                                break;
+                            case "server-motd":
+                                this.motd = arg;
+                                break;
+                            case "port":
+                                this.port = Int32.Parse(arg);
+                                break;
+                            case "max-players":
+                                this.maxPlayers = Int32.Parse(arg);
+                                break;
+                            case "default-world":
+                                this.worldPath = arg;
+                                break;
+                            case "verify-names":
+                                this.verify_names = Boolean.Parse(arg);
+                                break;
+                            case "public":
+                                this.isPublic = Boolean.Parse(arg);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    cfgReader.Close();
+                }
+                else
+                {
+                    Program.server.logger.log("File \"server.cfg\" not found.  Generating default.", Logger.LogType.Warning);
+                    StreamWriter cfgWriter = new StreamWriter(File.Create("server.cfg"));
+                    cfgWriter.WriteLine("#uMiner Configuration File");
+                    cfgWriter.WriteLine("server-name = uMiner Server");
+                    cfgWriter.WriteLine("server-motd = Welcome to my uMiner server");
+                    cfgWriter.WriteLine("port = 25565");
+                    cfgWriter.WriteLine("max-players = 8");
+                    cfgWriter.WriteLine("default-world = default.umw");
+                    cfgWriter.WriteLine("verify-names = true");
+                    cfgWriter.WriteLine("public = true");
+                    cfgWriter.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Program.server.logger.log("Unable to load or generate config!  Full error:", Logger.LogType.Error);
+                Program.server.logger.log(e);
+            }
         }
     }
 }

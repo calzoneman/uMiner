@@ -14,6 +14,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -166,8 +167,22 @@ namespace uMiner
             }
             //Read username
             this.username = Encoding.ASCII.GetString(this.inputReader.ReadBytes(64)).Trim();
-            //There is also an mppass for name verification but we don't care (yet)
-            this.inputReader.ReadBytes(64);
+
+            //Verify the name
+            if (Program.server.verify_names)
+            {
+                string mppass = Encoding.ASCII.GetString(this.inputReader.ReadBytes(64)).Trim();
+                while (mppass.Length < 32) { mppass = "0" + mppass; }
+                MD5 hasher = new MD5CryptoServiceProvider();
+                byte[] cmpHash = hasher.ComputeHash(Encoding.ASCII.GetBytes(Program.server.salt + username));
+                for (int i = 0; i < 16; i += 2)
+                {
+                    if (mppass[i] + "" + mppass[i + 1] != cmpHash[i / 2].ToString("x2"))
+                    {
+                        Kick("Name verification failed!", true);
+                    }
+                }
+            }
 
             //Unused byte
             this.inputReader.ReadByte();
@@ -212,6 +227,7 @@ namespace uMiner
 
             //We are logged in now
             loggedIn = true;
+            Program.server.plyCount++;
 
             //If they are ranked operator or admin, give them a snazzy prefix
             if (rank >= 128) { prefix = "+"; }
@@ -655,7 +671,8 @@ namespace uMiner
             }
             Program.server.logger.log(username + "(" + ip + ") disconnected.");
             Program.server.playerlist[id] = null;
-            if (this.plyClient.Connected) { this.plyClient.Close(); }
+            Program.server.plyCount--;
+            if (this.plyClient.Connected && !this.disconnected) { this.plyClient.Close(); }
         }
         #endregion
 
