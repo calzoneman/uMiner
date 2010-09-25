@@ -345,6 +345,12 @@ namespace uMiner
                 return;
             }
 
+            if (type > 49)
+            {
+                Kick("Illegal tile type", false);
+                return;
+            }
+
             if (action == 0)
             {
                 type = 0;
