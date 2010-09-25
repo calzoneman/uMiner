@@ -48,6 +48,8 @@ namespace uMiner
         {
             switch (ranklevel)
             {
+                case 0:
+                    return "&1";
                 case 1:
                     return "&7";
                 case 16:
@@ -65,6 +67,8 @@ namespace uMiner
         {
             switch (rankName)
             {
+                case "none":
+                    return "&1";
                 case "guest":
                     return "&7";
                 case "player":

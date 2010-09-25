@@ -99,10 +99,15 @@ namespace uMiner
                 world.Save();
             });
 
+            //Intercept Ctrl+C
             Console.CancelKeyPress += new ConsoleCancelEventHandler(delegate
                 {
                     world.Save();
                 });
+
+
+            //Load Commands
+            Command.Init();
             
 
             //Load ranks

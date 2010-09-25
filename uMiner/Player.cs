@@ -188,9 +188,9 @@ namespace uMiner
             this.inputReader.ReadByte();
 
             //Check Rank
-            if (Program.server.playerRanksDict.ContainsKey(username))
+            if (Program.server.playerRanksDict.ContainsKey(username.ToLower()))
             {
-                this.rank = Program.server.playerRanksDict[username];
+                this.rank = Program.server.playerRanksDict[username.ToLower()];
             }
             else
             {
@@ -230,23 +230,20 @@ namespace uMiner
             Program.server.plyCount++;
 
             //If they are ranked operator or admin, give them a snazzy prefix
-            if (rank >= 128) { prefix = "+"; }
-            if (rank == 255) { prefix = "@"; }
+            if (rank == Rank.RankLevel("operator")) { prefix = "+"; }
+            if (rank == Rank.RankLevel("owner")) { prefix = "@"; }
 
             //Send the map
-            byte[] emptymap = new byte[4096];
-            for (int i = 0; i < 256; i++) { emptymap[i] = (byte)2; }
-            for (int i = 256; i < 4096; i++) { emptymap[i] = (byte)0; }
             this.SendPacket(new Packet(new byte[1] { (byte)ServerPacket.MapBegin }));
             SendMap(Program.server.world);
 
             //Announce the player's arrival
-            string loginMessage = "[ " + Rank.GetColor(rank);
+            string loginMessage = Rank.GetColor(rank).ToString();
             if(!prefix.Equals(""))
             {
                 loginMessage += prefix;
             }
-            loginMessage += username + "&e joined the game ]";
+            loginMessage += username + "&e joined the game";
             GlobalMessage(loginMessage);
             
         }
@@ -291,6 +288,20 @@ namespace uMiner
         {
             this.inputReader.ReadByte();
             string rawmsg = Encoding.ASCII.GetString(this.inputReader.ReadBytes(64)).Trim();
+            //Test for commands
+            if (rawmsg.Trim()[0] == '/')
+            {
+                string cmd = "", args = "";
+                if (rawmsg.Contains(" "))
+                {
+                    cmd = rawmsg.Trim().Substring(1, rawmsg.IndexOf(' ') - 1);
+                    args = rawmsg.Trim().Substring(rawmsg.IndexOf(' ')).Trim();
+                }
+                else { cmd = rawmsg.Substring(1); }
+                Command.HandleCommand(this, cmd, args);
+                return;
+            }
+
             string message = "";
             if (prefix != "")
             {
@@ -320,6 +331,7 @@ namespace uMiner
             byte action = this.inputReader.ReadByte();
             byte type = this.inputReader.ReadByte();
 
+            if (this.rank == 0) { return; }
             byte mapBlock = world.GetTile(x, y, z);
 
             if (mapBlock == 7 && rank < Rank.RankLevel("operator"))
@@ -401,7 +413,7 @@ namespace uMiner
                 Program.server.logger.log("Player " + username + " kicked (" + reason + ")");
                 if (!silent)
                 {
-                    GlobalMessage("[ Player " + Rank.GetColor(rank) + prefix + username + "&e kicked (" + reason + ") ]");
+                    GlobalMessage("Player " + Rank.GetColor(rank) + prefix + username + "&e kicked (" + reason + ")");
                 }
                 Disconnect(silent);
             }
@@ -616,6 +628,7 @@ namespace uMiner
 
         public static void GlobalMessage(string message)
         {
+            message = "[ " + message + " ]";
             foreach (Player p in Program.server.playerlist)
             {
                 try
@@ -659,7 +672,7 @@ namespace uMiner
             this.disconnected = true;
             if (!silent)
             {
-                GlobalMessage("[ " + Rank.GetColor(rank) + prefix + username + "&e disconnected. ]");
+                GlobalMessage(Rank.GetColor(rank) + prefix + username + "&e disconnected.");
                 foreach (Player pl in Program.server.playerlist)
                 {
                     if (pl != null && pl.loggedIn)
