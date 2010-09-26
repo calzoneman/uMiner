@@ -48,6 +48,7 @@ namespace uMiner
                     }
                     if (pl.rank < newrank || p.rank > pl.rank)
                     {
+                        byte oldRank = pl.rank;
                         pl.rank = newrank;
                         Program.server.playerRanksDict[pl.username.ToLower()] = pl.rank;
                         Program.server.saveRanks();
@@ -68,6 +69,23 @@ namespace uMiner
                         if (newrank < Rank.RankLevel("player"))
                         {
                             pl.binding = Bindings.None;
+                        }
+                        
+                        //If the person was OP before, disable adminium editing
+                        //Vice versa as well
+                        if (oldRank >= Rank.RankLevel("operator") && newrank < Rank.RankLevel("operator"))
+                        {
+                            Packet deop = new Packet(2);
+                            deop.Append((byte)ServerPacket.RankUpdate);
+                            deop.Append((byte)0x0);
+                            pl.SendPacket(deop);
+                        }
+                        else if (oldRank < Rank.RankLevel("operator") && newrank >= Rank.RankLevel("operator"))
+                        {
+                            Packet deop = new Packet(2);
+                            deop.Append((byte)ServerPacket.RankUpdate);
+                            deop.Append((byte)0x64);
+                            pl.SendPacket(deop);
                         }
 
                         //Despawn and respawn player

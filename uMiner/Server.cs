@@ -27,10 +27,10 @@ namespace uMiner
         public bool isPublic = true;
         public int port = 25565;
         public bool verify_names = true;
+        public bool logWithColor = false;
         
         //Server stuff
         public string salt;
-
         public const int protocolVersion = Protocol.version;
         public bool running = true;
         
@@ -85,6 +85,10 @@ namespace uMiner
             }
 
             //Load world and start save timer
+            if (!Directory.Exists("maps"))
+            {
+                Directory.CreateDirectory("maps");
+            }
             if (!File.Exists("maps/" + worldPath))
             {
                 world = new World(64, 64, 64);
@@ -204,7 +208,7 @@ namespace uMiner
             while(true)  //Main Loop
             {
                 if (!running) { return; }
-                System.Threading.Thread.Sleep(10);
+                System.Threading.Thread.Sleep(1000); //This thread does nothing but check if the server is still running
             }
         }
                 
@@ -309,6 +313,9 @@ namespace uMiner
                             case "public":
                                 this.isPublic = Boolean.Parse(arg);
                                 break;
+                            case "log-with-color":
+                                this.logger.logWithColor = Boolean.Parse(arg);
+                                break;
                             default:
                                 break;
                         }
@@ -327,6 +334,7 @@ namespace uMiner
                     cfgWriter.WriteLine("default-world = default.umw");
                     cfgWriter.WriteLine("verify-names = true");
                     cfgWriter.WriteLine("public = true");
+                    cfgWriter.WriteLine("log-with-color = false");
                     cfgWriter.Close();
                 }
             }

@@ -18,6 +18,7 @@ namespace uMiner
     {
         public string filename = "server.log";
         public List<string> buffer = new List<string>();
+        public bool logWithColor = false;
 
         public Logger()
         {
@@ -26,7 +27,7 @@ namespace uMiner
 
         public void log(string data, LogType type)
         {
-            string display = "[" + DateTime.Now.ToString() + "]" + "[" + type.ToString() + "] " + data;
+            string display = "[" + DateTime.Now.ToString() + "]" + "[" + type.ToString() + "] " + StripColor(data);
             buffer.Add(display);
             logToConsole(data, type);
             try
@@ -82,8 +83,134 @@ namespace uMiner
                     Console.Write("[Unknown Type]");
                     break;
             }
-            Console.WriteLine(data);
+            if (logWithColor && type.ToString().Equals("Chat"))
+            {
+                bool defaultToYellow = false;
+                if (data.Length > 8 && data.Trim().Substring(0, 8).Equals("(Global)"))
+                {
+                    defaultToYellow = true;
+                }
+                WriteLineColor(data, defaultToYellow);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.BackgroundColor = ConsoleColor.Black;
+            }
+            else
+            {
+                Console.WriteLine(StripColor(data));
+            }
         }
+
+        public static void WriteLineColor(string line, bool defaultYellow)
+        {
+            int i = 0;
+            Console.ForegroundColor = ConsoleColor.White;
+            if (defaultYellow) { Console.ForegroundColor = ConsoleColor.Yellow; }
+            while (i < line.Length)
+            {
+
+                if (line[i] == '&')
+                {
+                    int code = int.Parse(string.Empty + line[i + 1], System.Globalization.NumberStyles.HexNumber);
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    switch (code)
+                    {
+                        case 0:
+                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.BackgroundColor = ConsoleColor.Gray;
+                            break;
+                        case 1:
+                            Console.ForegroundColor = ConsoleColor.DarkBlue;
+                            Console.BackgroundColor = ConsoleColor.Gray;
+                            break;
+                        case 2:
+                            Console.ForegroundColor = ConsoleColor.DarkGreen;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        case 3:
+                            Console.ForegroundColor = ConsoleColor.DarkCyan;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        case 4:
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        case 5:
+                            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        case 6:
+                            Console.ForegroundColor = ConsoleColor.DarkYellow;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        case 7:
+                            Console.ForegroundColor = ConsoleColor.Gray;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        case 8:
+                            Console.ForegroundColor = ConsoleColor.DarkGray;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        case 9:
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        case 10:
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        case 11:
+                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        case 12:
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        case 13:
+                            Console.ForegroundColor = ConsoleColor.Magenta;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        case 14:
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        case 15:
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                if (!(line[i] == '&' || line[i] == 10 || (i - 1 >= 0 && line[i - 1] == '&')))
+                {
+                    Console.Write(line[i]);
+                }
+                if (line[i] == 10)
+                {
+                    Console.WriteLine();
+                }
+                i++;
+            }
+            Console.WriteLine();
+        }
+
+        public string StripColor(string input)
+        {
+            int i = 0;
+            StringBuilder output = new StringBuilder();
+            while (i < input.Length)
+            {
+                if (!(input[i] == '&' && i + 1 < input.Length && "0123456789abcdef".Contains(input[i + 1].ToString())) && !("0123456789abcdef".Contains(input[i].ToString()) && i - 1 >= 0 && input[i - 1] == '&'))
+                {
+                    output.Append(input[i]);
+                }
+                i++;
+            }
+            return output.ToString();
+        }
+
 
 
         public enum LogType

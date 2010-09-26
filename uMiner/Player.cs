@@ -316,16 +316,9 @@ namespace uMiner
             }
 
             string message = "";
-            if (prefix != "")
-            {
-                Program.server.logger.log("<" + prefix + "" + username + "> " + rawmsg, Logger.LogType.Chat);
-                message = Rank.GetColor(rank) + "<" + prefix + "" + username + "> &f" + rawmsg;
-            }
-            else
-            {
-                Program.server.logger.log("<" + username + "> " + rawmsg, Logger.LogType.Chat);
-                message = Rank.GetColor(rank) + "<" + username + "> &f" + rawmsg;
-            }
+            message = Rank.GetColor(rank) + "<" + prefix + username + "> &f" + rawmsg;
+            Program.server.logger.log(message, Logger.LogType.Chat);
+
             foreach (Player p in Program.server.playerlist)
             {
                 if (p != null && p.loggedIn)
