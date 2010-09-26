@@ -76,12 +76,13 @@ namespace uMiner
             }
 
             //Load config
-            playerlist = new Player[maxPlayers + 1];  //Extra slot is for rejects
-            for (int i = 0; i < maxPlayers + 1; i++)
+            LoadConfig();
+
+            playerlist = new Player[maxPlayers + 2];  //Extra slot is for rejects, and another one (for some odd reason it's less by one)
+            for (int i = 0; i < maxPlayers + 2; i++)
             {
                 playerlist[i] = null;
             }
-            LoadConfig();
 
             //Load world and start save timer
             if (!File.Exists("maps/" + worldPath))

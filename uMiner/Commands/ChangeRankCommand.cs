@@ -65,6 +65,11 @@ namespace uMiner
                             pl.prefix = "+";
                         }
 
+                        if (newrank < Rank.RankLevel("player"))
+                        {
+                            pl.binding = Bindings.None;
+                        }
+
                         //Despawn and respawn player
                         Packet despawn = new Packet(2);
                         despawn.Append((byte)ServerPacket.PlayerDie);

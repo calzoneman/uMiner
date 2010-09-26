@@ -22,7 +22,7 @@ namespace uMiner
                 Command.HelpMessage(p, message.Trim());
                 return;
             }
-            p.SendMessage(0xFF, "Running uMiner Rev. &a10");
+            p.SendMessage(0xFF, "Running uMiner Rev. &a" + Program.revision.ToString());
             p.SendMessage(0xFF, "---------------------");
             p.SendMessage(0xFF, "Global messages are enclosed in brackets [ ]");
             p.SendMessage(0xFF, "Visit &fhttp://github.com/calzoneman/uMiner&e for downloads and source code.");
