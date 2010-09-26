@@ -15,7 +15,7 @@ namespace uMiner
 {
     public class TeleportCommand
     {
-        public static void ExecuteTp(Player p, string message)
+        public static void Tp(Player p, string message)
         {
             if (message.Trim().Equals(""))
             {
@@ -40,7 +40,7 @@ namespace uMiner
             p.SendMessage(0xFF, "Could not find player " + message);
         }
 
-        public static void ExecuteFetch(Player p, string message)
+        public static void Fetch(Player p, string message)
         {
             if (message.Trim().Equals(""))
             {
@@ -63,6 +63,21 @@ namespace uMiner
                 }
             }
             p.SendMessage(0xFF, "Could not find player " + message);
+        }
+
+        public static void Help(Player p, string cmd)
+        {
+            switch (cmd)
+            {
+                case "tp":
+                    p.SendMessage(0xFF, "/tp player - Teleports you to player's location");
+                    break;
+                case "fetch":
+                    p.SendMessage(0xFF, "/fetch player - Fetches player to your location");
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

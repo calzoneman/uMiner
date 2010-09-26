@@ -35,6 +35,7 @@ namespace uMiner
         public byte id;
         public byte rank = 0x01; //Guest
         public bool disconnected = false;
+        public Bindings binding = Bindings.None;
 
         public World world;
 
@@ -187,6 +188,12 @@ namespace uMiner
             //Unused byte
             this.inputReader.ReadByte();
 
+            if (Program.server.ipbanned.Contains(ip))
+            {
+                Kick("You're IP Banned!", true);
+                return;
+            }
+
             //Check Rank
             if (Program.server.playerRanksDict.ContainsKey(username.ToLower()))
             {
@@ -196,6 +203,12 @@ namespace uMiner
             {
                 this.rank = Rank.RankLevel("guest");
                 Program.server.saveRanks();
+            }
+
+            if (rank == Rank.RankLevel("none"))
+            {
+                Kick("You're banned!", true);
+                return;
             }
 
             //Send a response
@@ -334,12 +347,22 @@ namespace uMiner
             if (this.rank == 0) { return; }
             byte mapBlock = world.GetTile(x, y, z);
 
+            if (type == 1 && this.binding != Bindings.None)
+            {
+                type = (byte)this.binding;
+            }
+
             if (mapBlock == 7 && rank < Rank.RankLevel("operator"))
             {
                 Kick("Attempted to break adminium", false);
                 return;
             }
-            if ((type >= 7 && type <= 11) && rank < Rank.RankLevel("operator"))
+            if (type == 7 && rank < Rank.RankLevel("operator"))
+            {
+                Kick("Illegal tile type", false);
+                return;
+            }
+            if ((type >= 8 && type <= 11) && rank < Rank.RankLevel("operator") && type != (byte)this.binding)
             {
                 Kick("Illegal tile type", false);
                 return;
@@ -356,14 +379,7 @@ namespace uMiner
                 type = 0;
             }
             this.world.SetTile(x, y, z, type);
-
-            foreach (Player p in Program.server.playerlist)
-            {
-                if (p != null && p.loggedIn)
-                {
-                    p.SendBlock(x, y, z, type);
-                }
-            }
+            GlobalBlockchange(x, y, z, type);
         }
 
 
@@ -632,6 +648,30 @@ namespace uMiner
 
         #region Global Stuff
 
+        public static void GlobalBlockchange(short x, short y, short z, byte type)
+        {
+            Packet blockPacket = new Packet(8);
+            blockPacket.Append((byte)ServerPacket.Blockchange);
+            blockPacket.Append(x);
+            blockPacket.Append(y);
+            blockPacket.Append(z);
+            blockPacket.Append(type);
+            foreach (Player p in Program.server.playerlist)
+            {
+                try
+                {
+                    if (p != null && p.loggedIn && !p.disconnected)
+                    {
+                        p.SendPacket(blockPacket);
+                    }
+                }
+                catch
+                {
+                    p.Disconnect(false);
+                }
+            }
+        }
+
         public static void GlobalMessage(string message)
         {
             message = "[ " + message + " ]";
@@ -705,7 +745,8 @@ namespace uMiner
             int limit = 64; string color = "";
             while (message.Length > 0)
             {
-                if (lines.Count > 0) { message = "> " + color + message.Trim(); }
+                if (lines.Count > 0 && message.Trim()[0] == '&') { message = "> " + message.Trim(); }
+                else if (lines.Count > 0) { message = "> " + color + message.Trim(); }
                 if (message.Length <= limit) { lines.Add(message); break; }
                 for (int i = limit - 1; i > limit - 9; --i)
                 {

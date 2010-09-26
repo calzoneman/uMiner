@@ -39,9 +39,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command.cs" />
+    <Compile Include="Commands\ColorCommand.cs" />
     <Compile Include="Commands\DisconnectCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Commands\ChangeRankCommand.cs" />
+    <Compile Include="Commands\PlaceCommand.cs" />
     <Compile Include="Commands\SayCommand.cs" />
     <Compile Include="Commands\TeleportCommand.cs" />
     <Compile Include="Commands\WhereCommand.cs" />

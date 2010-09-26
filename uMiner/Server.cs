@@ -36,6 +36,7 @@ namespace uMiner
         
         //Players
         public Player[] playerlist;
+        public List<string> ipbanned;
 
         //Map
         public World world;
@@ -138,6 +139,32 @@ namespace uMiner
                 return;
             }
             logger.log("Loaded ranks from ranks.txt");
+
+            ipbanned = new List<string>();
+            try
+            {
+                if (File.Exists("ipbans.txt"))
+                {
+                    StreamReader sr = new StreamReader(File.OpenRead("ipbans.txt"));
+                    while (!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine();
+                        if (line != null && !line.Equals(""))
+                        {
+                            ipbanned.Add(line.Trim());
+                        }
+                    }
+                    sr.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                logger.log("Error while loading ranks:", Logger.LogType.Error);
+                logger.log(e);
+                running = false;
+                return;
+            }
+            logger.log("Loaded ipbans from ipbans.txt");
             //etc
             
             //Initialize heartbeat timer
@@ -222,6 +249,26 @@ namespace uMiner
                 return;
             }
             logger.log("Saved ranks to ranks.txt");
+        }
+
+        public void saveIpBans()
+        {
+            try
+            {
+                StreamWriter sw = new StreamWriter(File.Open("ipbanned.txt", FileMode.OpenOrCreate, FileAccess.Write));
+                foreach (string ip in this.ipbanned)
+                {
+                    sw.WriteLine(ip);
+                }
+                sw.Close();
+            }
+            catch (Exception e)
+            {
+                logger.log("Exception occurred while saving ipbans", Logger.LogType.Error);
+                logger.log(e);
+                return;
+            }
+            logger.log("Saved ipbans to ipbans.txt");
         }
 
         public void LoadConfig()

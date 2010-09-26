@@ -15,22 +15,22 @@ namespace uMiner
 {
     public class ChangeRankCommand
     {
-        public static void ExecuteGuest(Player p, string message)
+        public static void Guest(Player p, string message)
         {
-            ExecuteBase(p, message, Rank.RankLevel("guest"));
+            Base(p, message, Rank.RankLevel("guest"));
         }
 
-        public static void ExecutePlayer(Player p, string message)
+        public static void Player(Player p, string message)
         {
-            ExecuteBase(p, message, Rank.RankLevel("player"));
+            Base(p, message, Rank.RankLevel("player"));
         }
 
-        public static void ExecuteOperator(Player p, string message)
+        public static void Operator(Player p, string message)
         {
-            ExecuteBase(p, message, Rank.RankLevel("operator"));
+            Base(p, message, Rank.RankLevel("operator"));
         }
 
-        public static void ExecuteBase(Player p, string message, byte newrank)
+        public static void Base(Player p, string message, byte newrank)
         {
             if (message.Trim().Equals(""))
             {
@@ -76,8 +76,8 @@ namespace uMiner
                                 ply.SendPacket(despawn);
                             }
                         }
-                        Player.GlobalSpawnPlayer(pl);
-                        Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e set " + Rank.GetColor(pl.rank) + pl.prefix + pl.username + "&e's rank to " + Rank.GetColor(newrank) + Rank.RankName(newrank) + "&e");
+                        uMiner.Player.GlobalSpawnPlayer(pl);
+                        uMiner.Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e set " + Rank.GetColor(pl.rank) + pl.prefix + pl.username + "&e's rank to " + Rank.GetColor(newrank) + Rank.RankName(newrank) + "&e");
                     }
                     else
                     {
@@ -92,6 +92,11 @@ namespace uMiner
             }
 
             p.SendMessage(0xFF, "Could not find player " + message);
+        }
+
+        public static void Help(Player p, string cmd)
+        {
+            p.SendMessage(0xFF, "/" + cmd + " player - set player's rank to " + cmd);
         }
     }
 }

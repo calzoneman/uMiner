@@ -15,7 +15,7 @@ namespace uMiner
 {
     public class Program
     {
-        public static Server server = new Server(ServerType.POC);
+        public static Server server = new Server(ServerType.ClassicBuild);
         static void Main(string[] args)
         {
             server.Init();
@@ -25,6 +25,6 @@ namespace uMiner
 
     public enum ServerType
     {
-        POC // Proof Of Concept
+        ClassicBuild
     }
 }

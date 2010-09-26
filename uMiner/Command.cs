@@ -20,15 +20,22 @@ namespace uMiner
 
         public static void Init()
         {
-            commands.Add("fetch", new Command(TeleportCommand.ExecuteFetch, Rank.RankLevel("operator")));
-            commands.Add("guest", new Command(ChangeRankCommand.ExecuteGuest, Rank.RankLevel("operator")));
-            commands.Add("help", new Command(HelpCommand.Execute, Rank.RankLevel("guest")));
-            commands.Add("kick", new Command(DisconnectCommand.ExecuteKick, Rank.RankLevel("operator")));
-            commands.Add("operator", new Command(ChangeRankCommand.ExecuteOperator, Rank.RankLevel("owner")));
-            commands.Add("player", new Command(ChangeRankCommand.ExecutePlayer, Rank.RankLevel("operator")));
-            commands.Add("say", new Command(SayCommand.Execute, Rank.RankLevel("operator")));
-            commands.Add("tp", new Command(TeleportCommand.ExecuteTp, Rank.RankLevel("player")));
-            commands.Add("where", new Command(WhereCommand.Execute, Rank.RankLevel("player")));
+            commands.Add("ban", new Command(DisconnectCommand.Ban, Rank.RankLevel("operator")));
+            commands.Add("colors", new Command(ColorCommand.Colors, Rank.RankLevel("operator")));
+            commands.Add("fetch", new Command(TeleportCommand.Fetch, Rank.RankLevel("operator")));
+            commands.Add("guest", new Command(ChangeRankCommand.Guest, Rank.RankLevel("operator")));
+            commands.Add("help", new Command(HelpCommand.Help, Rank.RankLevel("guest")));
+            commands.Add("ipban", new Command(DisconnectCommand.IpBan, Rank.RankLevel("operator")));
+            commands.Add("kick", new Command(DisconnectCommand.Kick, Rank.RankLevel("operator")));
+            commands.Add("operator", new Command(ChangeRankCommand.Operator, Rank.RankLevel("owner")));
+            commands.Add("place", new Command(PlaceCommand.Place, Rank.RankLevel("player")));
+            commands.Add("player", new Command(ChangeRankCommand.Player, Rank.RankLevel("operator")));
+            commands.Add("ranks", new Command(HelpCommand.Ranks, Rank.RankLevel("guest")));
+            commands.Add("say", new Command(SayCommand.Say, Rank.RankLevel("operator")));
+            commands.Add("tp", new Command(TeleportCommand.Tp, Rank.RankLevel("player")));
+            commands.Add("unban", new Command(DisconnectCommand.Unban, Rank.RankLevel("operator")));
+            commands.Add("unipban", new Command(DisconnectCommand.UnbanIp, Rank.RankLevel("operator")));
+            commands.Add("where", new Command(WhereCommand.Where, Rank.RankLevel("player")));
         }
 
         public static void HandleCommand(Player p, string cmd, string msg)
@@ -51,40 +58,45 @@ namespace uMiner
 
         public static void HelpMessage(Player p, string cmd)
         {
-            string message = "";
             switch (cmd)
             {
+                case "colors":
+                    ColorCommand.Help(p, cmd);
+                    break;
                 case "fetch":
-                    message = "/fetch player - Brings player to your location";
+                case "tp":
+                    TeleportCommand.Help(p, cmd);
                     break;
                 case "guest":
-                    message = "/guest player - Sets player's rank to guest (if they are lower ranked than you)";
+                case "player":
+                case "operator":
+                    ChangeRankCommand.Help(p, cmd);
                     break;
                 case "help":
-                    message = "/help [command] - Displays a help menu [about command]";
+                    p.SendMessage(0xFF, "/help - Displays a help menu");
+                    break;
+                case "ranks":
+                    p.SendMessage(0xFF, "/ranks - Displays information regarding ranks");
                     break;
                 case "kick":
-                    message = "/kick player [reason] - Disconnects player [with reason]";
+                case "ban":
+                case "ipban":
+                case "unban":
+                case "unipban":
+                    DisconnectCommand.Help(p, cmd);
                     break;
-                case "operator":
-                    message = "/operator player - Sets player's rank to operator (if they are lower ranked than you)";
-                    break;
-                case "player":
-                    message = "/player player - Sets player's rank to player";
+                case "place":
+                    PlaceCommand.Help(p);
                     break;
                 case "say":
-                    message = "/say message - Displays message as a global message (use %0-9a-f for color codes)";
-                    break;
-                case "tp":
-                    message = "/tp player - Teleports you to player's location";
+                    SayCommand.Help(p);
                     break;
                 case "where":
-                    message = "/where [player] - Displays your location, or player's if specified";
+                    WhereCommand.Help(p);
                     break;
                 default:
                     break;
             }
-            p.SendMessage(0xFF, message);
         }
 
         public CommandHandler handler;

@@ -15,7 +15,7 @@ namespace uMiner
 {
     public class WhereCommand
     {
-        public static void Execute(Player p, string message)
+        public static void Where(Player p, string message)
         {
             if (message.Equals(""))
             {
@@ -42,6 +42,12 @@ namespace uMiner
                     p.SendMessage(0xFF, "Could not find player " + message);
                 }
             }
+        }
+
+        public static void Help(Player p)
+        {
+            p.SendMessage(0xFF, "/where - Tells your location");
+            p.SendMessage(0xFF, "/where player - Tells you player's location");
         }
     }
 }

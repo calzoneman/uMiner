@@ -15,7 +15,7 @@ namespace uMiner
 {
     public class SayCommand
     {
-        public static void Execute(Player p, string message)
+        public static void Say(Player p, string message)
         {
             StringBuilder finalMsg = new StringBuilder();
             message = message.Trim();
@@ -30,6 +30,12 @@ namespace uMiner
             }
             finalMsg.Append("&e");
             Player.GlobalMessage(finalMsg.ToString());
+        }
+
+        public static void Help(Player p)
+        {
+            p.SendMessage(0xFF, "/say message - Sends message as a global announcement");
+            p.SendMessage(0xFF, "-> use %0-9a-f for color codes (see /colors)");
         }
     }
 }

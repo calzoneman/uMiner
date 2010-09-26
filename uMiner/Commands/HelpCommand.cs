@@ -15,7 +15,7 @@ namespace uMiner
 {
     public class HelpCommand
     {
-        public static void Execute(Player p, string message)
+        public static void Help(Player p, string message)
         {
             if (!message.Trim().Equals(""))
             {
@@ -24,9 +24,11 @@ namespace uMiner
             }
             p.SendMessage(0xFF, "Running uMiner Rev. &a10");
             p.SendMessage(0xFF, "---------------------");
-            p.SendMessage(0xFF, "People with @ before their names are owners, people with + are operators.");
+            p.SendMessage(0xFF, "Global messages are enclosed in brackets [ ]");
             p.SendMessage(0xFF, "Visit &fhttp://github.com/calzoneman/uMiner&e for downloads and source code.");
             p.SendMessage(0xFF, "---------------------");
+            p.SendMessage(0xFF, "Type /help commandname for information about a specific command");
+            p.SendMessage(0xFF, "Type /ranks for information on ranks");
             StringBuilder availableCmds = new StringBuilder();
             availableCmds.Append("Available commands:");
             foreach (KeyValuePair<string, Command> cmd in Command.commands)
@@ -40,6 +42,16 @@ namespace uMiner
             }
             p.SendMessage(0xFF, availableCmds.ToString());
 
+        }
+
+        public static void Ranks(Player p, string message)
+        {
+            p.SendMessage(0xFF, "Ranks: ");
+            p.SendMessage(0, "&4@owner &e(" + Rank.RankLevel("owner") + ")");
+            p.SendMessage(0, "&9+operator &e(" + Rank.RankLevel("operator") + ")");
+            p.SendMessage(0, "player &e(" + Rank.RankLevel("player") + ")");
+            p.SendMessage(0, "&7guest &e(" + Rank.RankLevel("guest") + ")");
+            p.SendMessage(0, "&0[:(]banned &e(" + Rank.RankLevel("none") + ")");
         }
     }
 }
