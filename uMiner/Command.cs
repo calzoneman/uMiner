@@ -27,6 +27,7 @@ namespace uMiner
             commands.Add("help", new Command(HelpCommand.Help, Rank.RankLevel("guest")));
             commands.Add("ipban", new Command(DisconnectCommand.IpBan, Rank.RankLevel("operator")));
             commands.Add("kick", new Command(DisconnectCommand.Kick, Rank.RankLevel("operator")));
+            commands.Add("newworld", new Command(WorldCommand.NewWorld, Rank.RankLevel("owner")));
             commands.Add("operator", new Command(ChangeRankCommand.Operator, Rank.RankLevel("owner")));
             commands.Add("place", new Command(PlaceCommand.Place, Rank.RankLevel("player")));
             commands.Add("player", new Command(ChangeRankCommand.Player, Rank.RankLevel("operator")));
@@ -84,6 +85,9 @@ namespace uMiner
                 case "unban":
                 case "unipban":
                     DisconnectCommand.Help(p, cmd);
+                    break;
+                case "newworld":
+                    WorldCommand.Help(p, "newworld");
                     break;
                 case "place":
                     PlaceCommand.Help(p);

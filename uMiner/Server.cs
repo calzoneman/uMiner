@@ -28,6 +28,7 @@ namespace uMiner
         public int port = 25565;
         public bool verify_names = true;
         public bool logWithColor = false;
+        public bool lavaSpongeEnabled = false;
         
         //Server stuff
         public string salt;
@@ -41,6 +42,8 @@ namespace uMiner
         //Map
         public World world;
         public System.Timers.Timer worldSaveTimer;
+        public BasicPhysics physics;
+        public System.Threading.Thread physThread;
 
         //Ranks
         public Dictionary<string, byte> playerRanksDict;
@@ -105,6 +108,11 @@ namespace uMiner
                 world.Save();
             });
 
+            physics = new BasicPhysics(world, lavaSpongeEnabled);
+            this.physThread = new System.Threading.Thread(PhysicsUpdateLoop);
+            physThread.Start();
+            logger.log("Started BasicPhysics Engine");
+
             //Intercept Ctrl+C
             Console.CancelKeyPress += new ConsoleCancelEventHandler(delegate
                 {
@@ -114,7 +122,9 @@ namespace uMiner
 
             //Load Commands
             Command.Init();
-            
+
+            //Load blocks
+            Blocks.Init();            
 
             //Load ranks
             playerRanksDict = new Dictionary<string, byte>();
@@ -205,10 +215,32 @@ namespace uMiner
         public void Run()
         {
             worldSaveTimer.Start();
-            while(true)  //Main Loop
+            while (true)  //Main Loop
             {
                 if (!running) { return; }
                 System.Threading.Thread.Sleep(1000); //This thread does nothing but check if the server is still running
+            }
+        }
+
+        public void PhysicsUpdateLoop()
+        {
+            while (true)
+            {
+                try
+                {
+                    DateTime start = DateTime.Now;
+                    physics.Update();
+                    TimeSpan took = DateTime.Now - start;
+                    if (took.TotalMilliseconds < 50)
+                    {
+                        System.Threading.Thread.Sleep(50 - (int)took.TotalMilliseconds);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Program.server.logger.log("Error while executing physics: ", Logger.LogType.Error);
+                    Program.server.logger.log(e);
+                }
             }
         }
                 
@@ -316,6 +348,9 @@ namespace uMiner
                             case "log-with-color":
                                 this.logger.logWithColor = Boolean.Parse(arg);
                                 break;
+                            case "sponge-lava":
+                                this.lavaSpongeEnabled = Boolean.Parse(arg);
+                                break;
                             default:
                                 break;
                         }
@@ -335,6 +370,7 @@ namespace uMiner
                     cfgWriter.WriteLine("verify-names = true");
                     cfgWriter.WriteLine("public = true");
                     cfgWriter.WriteLine("log-with-color = false");
+                    cfgWriter.WriteLine("sponge-lava = false");
                     cfgWriter.Close();
                 }
             }

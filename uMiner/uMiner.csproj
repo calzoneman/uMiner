@@ -51,9 +51,12 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BasicPhysics.cs" />
+    <Compile Include="Blocks.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Commands\ColorCommand.cs" />
     <Compile Include="Commands\DisconnectCommand.cs" />
@@ -63,6 +66,7 @@
     <Compile Include="Commands\SayCommand.cs" />
     <Compile Include="Commands\TeleportCommand.cs" />
     <Compile Include="Commands\WhereCommand.cs" />
+    <Compile Include="Commands\WorldCommand.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Heartbeat.cs" />
     <Compile Include="Logger.cs" />

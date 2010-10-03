@@ -39,6 +39,12 @@ namespace uMiner
             currentIndex += 4;
         }
 
+        public void Append(uint data)
+        {
+            BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(data)).CopyTo(raw, currentIndex);
+            currentIndex += 4;
+        }
+
         public void Append(short data)
         {
             BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(data)).CopyTo(raw, currentIndex);
@@ -53,7 +59,7 @@ namespace uMiner
 
         public void Append(string data)
         {
-            Encoding.ASCII.GetBytes(data.PadRight(64).Substring(0, 64)).CopyTo(raw, currentIndex);
+            Encoding.UTF8.GetBytes(data.PadRight(64).Substring(0, 64)).CopyTo(raw, currentIndex);
             currentIndex += 64;
         }
 

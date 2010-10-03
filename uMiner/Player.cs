@@ -668,19 +668,22 @@ namespace uMiner
         public static void GlobalMessage(string message)
         {
             message = "[ " + message + " ]";
-            foreach (Player p in Program.server.playerlist)
+            foreach (string line in SplitLines(message))
             {
-                try
+                foreach (Player p in Program.server.playerlist)
                 {
-                    if (p != null && p.loggedIn && !p.disconnected)
+                    try
                     {
-                        p.SendMessage(0xFF, message);
+                        if (p != null && p.loggedIn && !p.disconnected)
+                        {
+                            p.SendMessage(0xFF, line);
+                        }
                     }
-                }
-                catch
-                {
-                    Program.server.logger.log("Failed to send Global Message to " + p.username, Logger.LogType.Warning);
-                    p.Disconnect(false);
+                    catch
+                    {
+                        Program.server.logger.log("Failed to send Global Message to " + p.username, Logger.LogType.Warning);
+                        p.Disconnect(false);
+                    }
                 }
             }
             Program.server.logger.log("(Global) " + message, Logger.LogType.Chat);

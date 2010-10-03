@@ -21,6 +21,7 @@ namespace uMiner
         public byte[] blocks;
         public string name;
         private string filename;
+        public bool saveToImage = false;
 
         public World(string filename)
         {
@@ -40,14 +41,49 @@ namespace uMiner
             this.spawnz = (short)(this.depth / 2);
         }
 
+        public World(string filename, short width, short height, short depth)
+        {
+            this.width = width;
+            this.height = height;
+            this.depth = depth;
+            this.name = filename.Substring(0, filename.LastIndexOf('.'));
+            this.filename = filename;
+            this.blocks = WorldGenerator.GenerateFlatgrass(width, height, depth);
+            this.spawnx = (short)(this.width / 2);
+            this.spawny = (short)(this.height / 2 + 2);
+            this.spawnz = (short)(this.depth / 2);
+        }
+
         public byte GetTile(int x, int y, int z)
         {
+            if (x < 0 || y < 0 || z < 0 || x >= this.width || y >= this.height || z >= this.depth)
+            {
+                return 0xFF;
+            }
             return this.blocks[(y * this.depth + z) * this.width + x];
         }
 
         public void SetTile(int x, int y, int z, byte type)
         {
+            if (x < 0 || y < 0 || z < 0 || x >= this.width || y >= this.height || z >= this.depth || type < 0 || type > 49)
+            {
+                return;
+            }
+            if (Blocks.BasicPhysics(type))
+            {
+                if (Blocks.AffectedBySponges(type) && Program.server.physics.FindSponge(x, y, z))
+                {
+                    return;
+                }
+                Program.server.physics.Queue(x, y, z, type);
+            }
+            if (GetTile(x, y, z) == Blocks.sponge && type == 0)
+            {
+                Program.server.physics.DeleteSponge(x, y, z);
+            }
             this.blocks[(y * this.depth + z) * this.width + x] = type;
+            Player.GlobalBlockchange((short)x, (short)y, (short)z, type);
+            
         }
 
         public void Save()
@@ -73,7 +109,7 @@ namespace uMiner
                 Program.server.logger.log("Error occurred while saving map", Logger.LogType.Error);
                 Program.server.logger.log(e);
             }
-        }
+        }                
 
         public bool Load(string filename)
         {
@@ -86,7 +122,7 @@ namespace uMiner
                 gzin.Read(magicnumbytes, 0, 4);
                 if (!(BitConverter.ToUInt32(magicnumbytes, 0) == 0xebabefac))
                 {
-                    Program.server.logger.log("Wrong magic number in level file", Logger.LogType.Error);
+                    Program.server.logger.log("Wrong magic number in level file: " + BitConverter.ToUInt32(magicnumbytes, 0), Logger.LogType.Error);
                     return false;
                 }
 
@@ -119,10 +155,7 @@ namespace uMiner
                 Program.server.logger.log(e);
                 return false;
             }
-        }
-
-
-
+        }     
             
     }
 }

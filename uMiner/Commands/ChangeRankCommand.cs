@@ -108,7 +108,7 @@ namespace uMiner
                     }
                     return;
                 }
-                else if (pl != null && pl.loggedIn && !pl.disconnected && pl.username.Substring(0, message.Length).ToLower().Equals(message.ToLower().Trim()))
+                else if (pl != null && pl.loggedIn && !pl.disconnected && pl.username.Length >= message.Length && pl.username.Substring(0, message.Length).ToLower().Equals(message.ToLower().Trim()))
                 {
                     p.SendMessage(0xFF, "-> " + Rank.GetColor(pl.rank) + pl.prefix + pl.username);
                 }

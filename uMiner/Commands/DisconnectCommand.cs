@@ -36,8 +36,8 @@ namespace uMiner
             }
             else
             {
-                string ply = message.Trim().Substring(0, message.IndexOf(" "));
-                string reason = message.Trim().Substring(message.IndexOf(" ") + 1);
+                string ply = message.Trim().Substring(0, message.Trim().IndexOf(" "));
+                string reason = message.Trim().Substring(message.Trim().IndexOf(" ") + 1);
                 foreach (Player pl in Program.server.playerlist)
                 {
                     if (pl != null && pl.loggedIn && !pl.disconnected && pl.username.ToLower().Equals(ply.Trim().ToLower()) && pl.rank <= p.rank)

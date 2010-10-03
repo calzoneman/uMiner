@@ -16,7 +16,7 @@ namespace uMiner
     public class Program
     {
         public static Server server = new Server(ServerType.ClassicBuild);
-        public const int revision = 15;
+        public const int revision = 16;
         static void Main(string[] args)
         {
             server.Init();
