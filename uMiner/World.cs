@@ -18,6 +18,7 @@ namespace uMiner
     {
         public short width, height, depth;
         public short spawnx, spawny, spawnz;
+        public byte srotx, sroty; //Spawn rotation
         public byte[] blocks;
         public string name;
         private string filename;
@@ -25,7 +26,21 @@ namespace uMiner
 
         public World(string filename)
         {
-            Load(filename);
+            try
+            {
+                if (filename.Substring(filename.LastIndexOf('.') + 1, 3).Equals("umo"))
+                {
+                    LoadOld(filename);
+                }
+                else
+                {
+                    Load(filename);
+                }
+            }
+            catch
+            {
+                Program.server.logger.log("Error while loading map.");
+            }
         }
 
         public World(short width, short height, short depth)
@@ -39,6 +54,7 @@ namespace uMiner
             this.spawnx = (short)(this.width / 2);
             this.spawny = (short)(this.height / 2 + 2);
             this.spawnz = (short)(this.depth / 2);
+            Console.WriteLine(spawnx + ", " + spawny + ", " + spawnz);
         }
 
         public World(string filename, short width, short height, short depth)
@@ -52,6 +68,7 @@ namespace uMiner
             this.spawnx = (short)(this.width / 2);
             this.spawny = (short)(this.height / 2 + 2);
             this.spawnz = (short)(this.depth / 2);
+            Console.WriteLine(spawnx + ", " + spawny + ", " + spawnz);
         }
 
         public byte GetTile(int x, int y, int z)
@@ -98,6 +115,8 @@ namespace uMiner
                 gzout.Write(BitConverter.GetBytes(spawnx), 0, 2);
                 gzout.Write(BitConverter.GetBytes(spawny), 0, 2);
                 gzout.Write(BitConverter.GetBytes(spawnz), 0, 2);
+                gzout.WriteByte(this.srotx);
+                gzout.WriteByte(this.sroty);
                 gzout.Write(this.blocks, 0, this.blocks.Length);
 
                 //gzout.BaseStream.Close();
@@ -110,6 +129,56 @@ namespace uMiner
                 Program.server.logger.log(e);
             }
         }                
+
+        public bool LoadOld(string filename)
+        {
+            try
+            {
+                this.filename = filename;
+                GZipStream gzin = new GZipStream(new FileStream("maps/" + filename, FileMode.Open), CompressionMode.Decompress);
+
+                byte[] magicnumbytes = new byte[4];
+                gzin.Read(magicnumbytes, 0, 4);
+                if (!(BitConverter.ToUInt32(magicnumbytes, 0) == 0xebabefac))
+                {
+                    Program.server.logger.log("Wrong magic number in level file: " + BitConverter.ToUInt32(magicnumbytes, 0), Logger.LogType.Error);
+                    return false;
+                }
+
+                byte[] leveldimensions = new byte[6];
+                gzin.Read(leveldimensions, 0, 6);
+                this.width = BitConverter.ToInt16(leveldimensions, 0);
+                this.height = BitConverter.ToInt16(leveldimensions, 2);
+                this.depth = BitConverter.ToInt16(leveldimensions, 4);
+
+                byte[] spawnpoint = new byte[6];
+                gzin.Read(spawnpoint, 0, 6);
+                this.spawnx = BitConverter.ToInt16(spawnpoint, 0);
+                this.spawny = BitConverter.ToInt16(spawnpoint, 2);
+                this.spawnz = BitConverter.ToInt16(spawnpoint, 4);
+
+                this.srotx = 0;
+                this.sroty = 0;
+
+                this.blocks = new byte[this.width * this.height * this.depth];
+                gzin.Read(blocks, 0, this.width * this.height * this.depth);
+
+                //gzin.BaseStream.Close();
+                gzin.Close();
+
+                this.name = filename.Substring(0, filename.IndexOf(".umo"));
+                this.filename = this.name + ".umw";
+
+                Program.server.logger.log("Loaded world from " + filename);
+                return true;
+            }
+            catch(Exception e)
+            {
+                Program.server.logger.log("Error occurred while loading map", Logger.LogType.Error);
+                Program.server.logger.log(e);
+                return false;
+            }
+        }
 
         public bool Load(string filename)
         {
@@ -138,6 +207,9 @@ namespace uMiner
                 this.spawny = BitConverter.ToInt16(spawnpoint, 2);
                 this.spawnz = BitConverter.ToInt16(spawnpoint, 4);
 
+                this.srotx = (byte)gzin.ReadByte();
+                this.sroty = (byte)gzin.ReadByte();
+
                 this.blocks = new byte[this.width * this.height * this.depth];
                 gzin.Read(blocks, 0, this.width * this.height * this.depth);
 
@@ -149,13 +221,13 @@ namespace uMiner
                 Program.server.logger.log("Loaded world from " + filename);
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Program.server.logger.log("Error occurred while loading map", Logger.LogType.Error);
                 Program.server.logger.log(e);
                 return false;
             }
-        }     
-            
+        } 
+
     }
 }

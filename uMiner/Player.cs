@@ -80,6 +80,7 @@ namespace uMiner
             }
             catch (IOException) { Disconnect(true); }
             catch (SocketException) { Disconnect(true); }
+            catch (ObjectDisposedException) { Disconnect(true); }
             catch (Exception e) { Program.server.logger.log(e); Disconnect(true); }
 
             DateTime pingTime = DateTime.Now;
@@ -90,7 +91,7 @@ namespace uMiner
                     //Send whatever remains in the queue
                     lock (queueLock)
                     {
-                        
+
                         while (outQueue.Count > 0)
                         {
                             Packet p = outQueue.Dequeue();
@@ -142,6 +143,7 @@ namespace uMiner
 
                 catch (IOException) { Disconnect(false); }
                 catch (SocketException) { Disconnect(false); }
+                catch (ObjectDisposedException) { Disconnect(false); }
                 catch (Exception e) { Program.server.logger.log(e); Disconnect(false); }
                                 
 

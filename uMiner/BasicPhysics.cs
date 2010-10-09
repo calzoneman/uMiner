@@ -49,6 +49,9 @@ namespace uMiner
                             case Blocks.sponge:
                                 NewSponge(block.x, block.y, block.z);
                                 break;
+                            case Blocks.staircasestep:
+                                Staircase(block);
+                                break;
                             default:
                                 break;
                         }
@@ -82,7 +85,7 @@ namespace uMiner
             switch (type)
             {
                 case Blocks.water:
-                    return 100;
+                    return 200;
                 case Blocks.lava:
                     return 800;
                 default:
@@ -197,6 +200,17 @@ namespace uMiner
             if (Blocks.BasicPhysics(world.GetTile(x, y + 1, z)) && world.GetTile(x, y + 1, z) != Blocks.air)
             {
                 Queue(x, y + 1, z, world.GetTile(x, y + 1, z));
+            }
+        }
+
+        public void Staircase(PhysicsBlock block)
+        {
+            if (world.GetTile(block.x, block.y, block.z) != block.type) { return; }
+
+            if (world.GetTile(block.x, block.y - 1, block.z) == Blocks.staircasestep)
+            {
+                world.SetTile(block.x, block.y - 1, block.z, Blocks.staircasefull);
+                world.SetTile(block.x, block.y, block.z, Blocks.air);
             }
         }
         #endregion

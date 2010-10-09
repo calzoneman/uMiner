@@ -152,6 +152,7 @@ namespace uMiner
                 case water:
                 case lava:
                 case sponge:
+                case staircasestep:
                     return true;
                 default:
                     return false;

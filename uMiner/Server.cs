@@ -80,6 +80,9 @@ namespace uMiner
 
             //Load config
             LoadConfig();
+            //Put server name in console title
+            Console.Title = this.serverName;
+            if (!this.isPublic) { Console.Title += " (PRIVATE)"; }
 
             playerlist = new Player[maxPlayers + 2];  //Extra slot is for rejects, and another one (for some odd reason it's less by one)
             for (int i = 0; i < maxPlayers + 2; i++)
@@ -94,7 +97,7 @@ namespace uMiner
             }
             if (!File.Exists("maps/" + worldPath))
             {
-                world = new World(64, 64, 64);
+                world = new World(256, 64, 256);
                 world.Save();
             }
             else
@@ -145,6 +148,12 @@ namespace uMiner
                     }
                     sr.Close();
                 }
+            }
+            catch (OverflowException)
+            {
+                logger.log("Error while loading ranks: rank cannot be higher than 255", Logger.LogType.Error);
+                running = false;
+                return;
             }
             catch (Exception e)
             {

@@ -24,15 +24,15 @@ namespace uMiner
                     for (short y = 0; y < height; y++)
                     {
                         int index = (y * depth + z) * width + x;
-                        if (y < height / 2 - 8)
+                        if (y < height / 2 - 9)
                         {
                             map[index] = (byte)1;
                         }
-                        else if (y < height / 2)
+                        else if (y < height / 2 - 1)
                         {
                             map[index] = (byte)3;
                         }
-                        else if (y == height / 2)
+                        else if (y == height / 2 - 1)
                         {
                             map[index] = (byte)2;
                         }

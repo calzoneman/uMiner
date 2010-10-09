@@ -39,6 +39,28 @@ namespace uMiner
             p.SendMessage(0xFF, "Created new world: " + worldname);
         }
 
+        public static void SetSpawn(Player p, string message)
+        {
+            Program.server.world.spawnx = (short)(p.x / 32);
+            Program.server.world.spawny = (short)(p.y / 32);
+            Program.server.world.spawnz = (short)(p.z / 32);
+
+            Program.server.world.srotx = p.rotx;
+            Program.server.world.sroty = p.roty;
+
+            Program.server.world.Save();
+
+            p.SendMessage(0xFF, "Spawnpoint saved");
+        }
+
+        public static void Spawn(Player p, string message)
+        {
+            short x = (short)(Program.server.world.spawnx * 32 + 16);
+            short y = (short)(Program.server.world.spawny * 32);
+            short z = (short)(Program.server.world.spawnz * 32 + 16);
+            p.SendSpawn(new short[] { x, y, z }, new byte[] { Program.server.world.srotx, Program.server.world.sroty });
+        }
+
         public static void Help(Player p, string cmd)
         {
             switch (cmd)
@@ -46,6 +68,12 @@ namespace uMiner
                 case "newworld":
                     p.SendMessage(0xFF, "/newworld name x y z - Creates a x*y*z size map with the specified name");
                     //p.SendMessage(0xFF, "Available modes: normal, image");
+                    break;
+                case "setspawn":
+                    p.SendMessage(0xFF, "/setspawn - Sets the map's spawnpoint to your location");
+                    break;
+                case "spawn":
+                    p.SendMessage(0xFF, "/spawn - Returns you to the map's spawnpoint");
                     break;
                 default:
                     break;

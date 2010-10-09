@@ -1,0 +1,17 @@
+﻿/**
+ * uMiner - A lightweight custom Minecraft Classic server written in C#
+ * Copyright 2010 Calvin "calzoneman" Montgomery
+ * 
+ * Licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License
+ * (see http://creativecommons.org/licenses/by-sa/3.0/, or LICENSE.txt for a full license
+ */
+ 
+ Revision 17
+ -----------
+ -Added staircasestep collapsing to BasicPhysics
+ -Increased water spread time
+ -Added silenced catcher for ObjectDisposedExceptions in Player.PlayerIO
+ -Grass level from worldgenerator should be at ocean level
+ -Changed map format to indclude spawn rotation (Old levels can still be loaded by renaming the extension to .umo)
+ -Added /setspawn command for operators+
+ -Added /spawn command for guests+ (teleport to map spawnpoint)
