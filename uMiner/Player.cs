@@ -48,6 +48,22 @@ namespace uMiner
 
         public Thread IOThread;
 
+        //Events
+        //Login
+        public delegate void LoginHandler(Player p);
+        public event LoginHandler OnLogin = null;
+        public void ResetLoginHandler() { OnLogin = null; }
+
+        //Blockchange
+        public delegate void BlockHandler(Player p, int x, int y, int z, byte type);
+        public event BlockHandler OnBlockchange = null;
+        public void ResetBlockHandler() { OnBlockchange = null; }
+
+        //Movement
+        public delegate void PositionChangeHandler(Player p, short[] oldPos, byte[] oldRot, short[] newPos, byte[] newRot);
+        public event PositionChangeHandler OnMovement = null;
+        public void ResetPositionChangeHandler() { OnMovement = null; }
+
         public Player(TcpClient client, string ip, byte id)
         {
             this.username = "player";
@@ -260,6 +276,10 @@ namespace uMiner
             }
             loginMessage += username + "&e joined the game";
             GlobalMessage(loginMessage);
+            if (this.OnLogin != null)
+            {
+                OnLogin(this);
+            }
             
         }
 
@@ -284,6 +304,8 @@ namespace uMiner
 
         public void PositionChange()
         {
+            short[] oldPos = new short[3] { x, y, z };
+            byte[] oldRot = new byte[2] { rotx, roty };
             this.inputReader.ReadByte();
             this.x = IPAddress.NetworkToHostOrder(this.inputReader.ReadInt16());
             this.y = IPAddress.NetworkToHostOrder(this.inputReader.ReadInt16());
@@ -296,6 +318,11 @@ namespace uMiner
                 {
                     pl.SendPlayerPositionChange(this);
                 }
+            }
+
+            if (this.OnMovement != null)
+            {
+                OnMovement(this, oldPos, oldRot, new short[] { x, y, z }, new byte[] { rotx, roty });
             }
         }
 
@@ -338,8 +365,14 @@ namespace uMiner
             short z = IPAddress.HostToNetworkOrder(this.inputReader.ReadInt16());
             byte action = this.inputReader.ReadByte();
             byte type = this.inputReader.ReadByte();
-
             if (this.rank == 0) { return; }
+
+            if (this.OnBlockchange != null)
+            {
+                OnBlockchange(this, x, y, z, type);
+                return;
+            }
+
             byte mapBlock = world.GetTile(x, y, z);
 
             if (type == 1 && this.binding != Bindings.None)
@@ -373,8 +406,10 @@ namespace uMiner
             {
                 type = 0;
             }
-            this.world.SetTile(x, y, z, type);
-            GlobalBlockchange(x, y, z, type);
+            if (!this.world.SetTile(x, y, z, type))
+            {
+                SendBlock(x, y, z, mapBlock);
+            }
         }
 
 
@@ -532,14 +567,16 @@ namespace uMiner
                 Packet mapFinal = new Packet(7);
                 mapFinal.Append((byte)ServerPacket.MapFinal);
                 mapFinal.Append(w.width);
-                mapFinal.Append(w.depth);
                 mapFinal.Append(w.height);
+                mapFinal.Append(w.depth);
                 this.SendPacket(mapFinal);
 
                 //Spawn player (convert map coordinates to player coordinates and set player pos)
-                this.x = (short)(w.spawnx * 32 + 16);
-                this.y = (short)(w.spawny * 32);
-                this.z = (short)(w.spawnz * 32 + 16);
+                this.x = (short)(w.spawnx << 5);
+                this.y = (short)(w.spawny << 5);
+                this.z = (short)(w.spawnz << 5);
+                this.rotx = w.srotx;
+                this.roty = w.sroty;
                 this.SpawnPlayer(this, true);
 
                 //Spawn other players
@@ -808,6 +845,35 @@ namespace uMiner
                 ret[i - start] = b[i];
             }
             return ret;
+        }
+        #endregion
+
+        #region Playerlist stuff
+        public static Player FindPlayer(Player from, string name, bool autoComplete)
+        {
+            List<Player> possible = new List<Player>();
+            foreach (Player pl in Program.server.playerlist)
+            {
+                if (pl != null && pl.loggedIn && pl.username.ToLower().Equals(name.ToLower()))
+                {
+                    return pl;
+                }
+                else if (pl != null && pl.loggedIn && pl.username.Length > name.Length && pl.username.Substring(0, name.Length).ToLower().Equals(name.ToLower()))
+                {
+                    from.SendMessage(0xFF, "-> " + Rank.GetColor(pl.rank) + pl.prefix + pl.username);
+                    possible.Add(pl);
+                }
+            }
+            if (possible.Count == 0)
+            {
+                from.SendMessage(0xFF, "Unable to find \"" + name + "\"");
+                return null;
+            }
+            if (possible.Count == 1) { return possible[0]; }
+            if (possible.Count > 1 && autoComplete) { return possible[0]; }
+
+            if (!autoComplete) { from.SendMessage(0xFF, "Autocomplete is disabled for this command"); }
+            return null;
         }
         #endregion
 

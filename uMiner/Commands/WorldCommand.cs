@@ -41,9 +41,9 @@ namespace uMiner
 
         public static void SetSpawn(Player p, string message)
         {
-            Program.server.world.spawnx = (short)(p.x / 32);
-            Program.server.world.spawny = (short)(p.y / 32);
-            Program.server.world.spawnz = (short)(p.z / 32);
+            Program.server.world.spawnx = (short)(p.x >> 5);
+            Program.server.world.spawny = (short)(p.y >> 5);
+            Program.server.world.spawnz = (short)(p.z >> 5);
 
             Program.server.world.srotx = p.rotx;
             Program.server.world.sroty = p.roty;
@@ -55,9 +55,9 @@ namespace uMiner
 
         public static void Spawn(Player p, string message)
         {
-            short x = (short)(Program.server.world.spawnx * 32 + 16);
-            short y = (short)(Program.server.world.spawny * 32);
-            short z = (short)(Program.server.world.spawnz * 32 + 16);
+            short x = (short)(Program.server.world.spawnx << 5);
+            short y = (short)(Program.server.world.spawny << 5);
+            short z = (short)(Program.server.world.spawnz << 5);
             p.SendSpawn(new short[] { x, y, z }, new byte[] { Program.server.world.srotx, Program.server.world.sroty });
         }
 

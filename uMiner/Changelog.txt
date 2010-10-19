@@ -6,6 +6,19 @@
  * (see http://creativecommons.org/licenses/by-sa/3.0/, or LICENSE.txt for a full license
  */
  
+ Revision 18
+ -----------
+ -Fixed SendMap() sending the dimensions in the wrong order (facepalm)
+ -Initial spawn now sends the rotation defined by the map's spawnpoint, instead of (0, 0)
+ -If you try to load a map that doesn't exist, it will generate and save to that file rather than to default.umw
+ -Lava+water collision should form obsidian now
+ -Fix for players still seeing rejected block changes caused by sponges
+ -Fixed /unipban not saving the ipban list (more specifically, saving to the wrong file)
+ -Added Player.FindPlayer(), a function to find players and (optionally) autocomplete
+ -Cleaned up disconnect and teleport commands a bit
+ -Added events for Login, Movement, and Blockchanges
+ -Banning 127.0.0.1 is not allowed
+ 
  Revision 17
  -----------
  -Added staircasestep collapsing to BasicPhysics

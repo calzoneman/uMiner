@@ -39,6 +39,7 @@ namespace uMiner
             commands.Add("unban", new Command(DisconnectCommand.Unban, Rank.RankLevel("operator")));
             commands.Add("unipban", new Command(DisconnectCommand.UnbanIp, Rank.RankLevel("operator")));
             commands.Add("where", new Command(WhereCommand.Where, Rank.RankLevel("player")));
+            commands.Add("who", new Command(WhoCommand.Who, Rank.RankLevel("player")));
         }
 
         public static void HandleCommand(Player p, string cmd, string msg)
@@ -101,6 +102,9 @@ namespace uMiner
                     break;
                 case "where":
                     WhereCommand.Help(p);
+                    break;
+                case "who":
+                    WhoCommand.Help(p);
                     break;
                 default:
                     break;

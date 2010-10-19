@@ -54,7 +54,6 @@ namespace uMiner
             this.spawnx = (short)(this.width / 2);
             this.spawny = (short)(this.height / 2 + 2);
             this.spawnz = (short)(this.depth / 2);
-            Console.WriteLine(spawnx + ", " + spawny + ", " + spawnz);
         }
 
         public World(string filename, short width, short height, short depth)
@@ -68,7 +67,6 @@ namespace uMiner
             this.spawnx = (short)(this.width / 2);
             this.spawny = (short)(this.height / 2 + 2);
             this.spawnz = (short)(this.depth / 2);
-            Console.WriteLine(spawnx + ", " + spawny + ", " + spawnz);
         }
 
         public byte GetTile(int x, int y, int z)
@@ -80,17 +78,17 @@ namespace uMiner
             return this.blocks[(y * this.depth + z) * this.width + x];
         }
 
-        public void SetTile(int x, int y, int z, byte type)
+        public bool SetTile(int x, int y, int z, byte type)
         {
             if (x < 0 || y < 0 || z < 0 || x >= this.width || y >= this.height || z >= this.depth || type < 0 || type > 49)
             {
-                return;
+                return false;
             }
             if (Blocks.BasicPhysics(type))
             {
                 if (Blocks.AffectedBySponges(type) && Program.server.physics.FindSponge(x, y, z))
                 {
-                    return;
+                    return false;
                 }
                 Program.server.physics.Queue(x, y, z, type);
             }
@@ -100,7 +98,7 @@ namespace uMiner
             }
             this.blocks[(y * this.depth + z) * this.width + x] = type;
             Player.GlobalBlockchange((short)x, (short)y, (short)z, type);
-            
+            return true;
         }
 
         public void Save()

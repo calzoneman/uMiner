@@ -19,7 +19,7 @@ namespace uMiner
         {
             if (message.Equals(""))
             {
-                p.SendMessage(0xFF, String.Format("X: {0}, Y: {1}, Z:{2}", p.x/32, p.y/32, p.z/32));
+                p.SendMessage(0xFF, String.Format("X: {0}, Y: {1}, Z: {2}", p.x/32, p.y/32, p.z/32));
             }
             else
             {

@@ -42,9 +42,11 @@ namespace uMiner
                                 break;
                             case Blocks.water:
                                 GenericSpread(block.x, block.y, block.z, block.type, false);
+                                CheckWaterLavaCollide(block.x, block.y, block.z, block.type);
                                 break;
                             case Blocks.lava:
                                 GenericSpread(block.x, block.y, block.z, block.type, false);
+                                CheckWaterLavaCollide(block.x, block.y, block.z, block.type);
                                 break;
                             case Blocks.sponge:
                                 NewSponge(block.x, block.y, block.z);
@@ -124,6 +126,38 @@ namespace uMiner
             if(canGoUp && world.GetTile(x, y + 1, z) == Blocks.air)
             {
                 world.SetTile(x, y + 1, z, type);
+            }
+        }
+
+        public void CheckWaterLavaCollide(int x, int y, int z, byte type)
+        {
+            if (world.GetTile(x, y, z) != type)
+            {
+                return;
+            }
+            if (LavaWaterCollide(world.GetTile(x + 1, y, z), type))
+            {
+                world.SetTile(x + 1, y, z, Blocks.obsidian);
+            }
+            if (LavaWaterCollide(world.GetTile(x - 1, y, z), type))
+            {
+                world.SetTile(x - 1, y, z, Blocks.obsidian);
+            }
+            if (LavaWaterCollide(world.GetTile(x, y, z + 1), type))
+            {
+                world.SetTile(x, y, z + 1, Blocks.obsidian);
+            }
+            if (LavaWaterCollide(world.GetTile(x, y, z - 1), type))
+            {
+                world.SetTile(x, y, z - 1, Blocks.obsidian);
+            }
+            if (LavaWaterCollide(world.GetTile(x, y - 1, z), type))
+            {
+                world.SetTile(x, y - 1, z, Blocks.obsidian);
+            }
+            if (LavaWaterCollide(world.GetTile(x, y + 1, z), type))
+            {
+                world.SetTile(x, y + 1, z, Blocks.obsidian);
             }
         }
 
@@ -215,6 +249,14 @@ namespace uMiner
         }
         #endregion
 
+        public bool LavaWaterCollide(byte a, byte b)
+        {
+            if ((a == Blocks.water && b == Blocks.lava) || (a == Blocks.lava && b == Blocks.water))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
     public class PhysicsBlock

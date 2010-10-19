@@ -97,7 +97,7 @@ namespace uMiner
             }
             if (!File.Exists("maps/" + worldPath))
             {
-                world = new World(256, 64, 256);
+                world = new World(worldPath, 256, 64, 256);
                 world.Save();
             }
             else
@@ -227,7 +227,7 @@ namespace uMiner
             while (true)  //Main Loop
             {
                 if (!running) { return; }
-                System.Threading.Thread.Sleep(1000); //This thread does nothing but check if the server is still running
+                System.Threading.Thread.Sleep(1000); 
             }
         }
 
@@ -301,10 +301,11 @@ namespace uMiner
         {
             try
             {
-                StreamWriter sw = new StreamWriter(File.Open("ipbanned.txt", FileMode.OpenOrCreate, FileAccess.Write));
+                StreamWriter sw = new StreamWriter(File.Open("ipbans.txt", FileMode.OpenOrCreate, FileAccess.Write));
                 foreach (string ip in this.ipbanned)
                 {
                     sw.WriteLine(ip);
+                    Console.WriteLine(ip);
                 }
                 sw.Close();
             }

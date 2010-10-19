@@ -159,6 +159,18 @@ namespace uMiner
             }
         }
 
+        public static bool Liquid(byte type)
+        {
+            switch (type)
+            {
+                case lava:
+                case water:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         public static bool AffectedBySponges(byte type)
         {
             switch (type)

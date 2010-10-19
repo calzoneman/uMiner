@@ -20,37 +20,31 @@ namespace uMiner
         {
             if (!message.Trim().Contains(" "))
             {
-                foreach (Player pl in Program.server.playerlist)
+                Player pl = Player.FindPlayer(p, message.Trim(), false);
+                if (pl != null && pl.rank <= p.rank)
                 {
-                    if (pl != null && pl.loggedIn && !pl.disconnected && pl.username.ToLower().Equals(message.Trim().ToLower()) && pl.rank <= p.rank)
-                    {
-                        pl.Kick("Kicked by " + p.username, false);
-                        return;
-                    }
-                    else if (pl != null && p.loggedIn && !pl.disconnected && pl.username.Substring(0, message.Length).ToLower().Equals(message.ToLower().Trim()))
-                    {
-                        p.SendMessage(0xFF, "->" + Rank.GetColor(pl.rank) + pl.prefix + pl.username);
-                    }
+                    pl.Kick("Kicked by " + Rank.GetColor(p.rank) + p.prefix + p.username + "&e", false);
                 }
-                p.SendMessage(0xFF, "Could not find player " + message);
+                else if(pl != null && pl.rank > p.rank)
+                {
+                    p.SendMessage(0xFF, "You can't kick that person!");
+                }
+                return;
             }
             else
             {
                 string ply = message.Trim().Substring(0, message.Trim().IndexOf(" "));
                 string reason = message.Trim().Substring(message.Trim().IndexOf(" ") + 1);
-                foreach (Player pl in Program.server.playerlist)
+                Player pl = Player.FindPlayer(p, ply, false);
+                if (pl != null && pl.rank <= p.rank)
                 {
-                    if (pl != null && pl.loggedIn && !pl.disconnected && pl.username.ToLower().Equals(ply.Trim().ToLower()) && pl.rank <= p.rank)
-                    {
-                        pl.Kick(reason, false);
-                        return;
-                    }
-                    else if (pl != null && p.loggedIn && !pl.disconnected && pl.username.Substring(0, ply.Length).ToLower().Equals(ply.ToLower().Trim()))
-                    {
-                        p.SendMessage(0xFF, "->" + Rank.GetColor(pl.rank) + pl.prefix + pl.username);
-                    }
+                    pl.Kick(reason, false);
                 }
-                p.SendMessage(0xFF, "Could not find player " + message);
+                else if(pl.rank > p.rank)
+                {
+                    p.SendMessage(0xFF, "You can't kick that person!");
+                }
+                return;
             }
         }
 
@@ -63,25 +57,17 @@ namespace uMiner
                     p.SendMessage(0xFF, "You can't ban yourself!");
                     return;
                 }
-                foreach (Player pl in Program.server.playerlist)
+                Player pl = Player.FindPlayer(p, message.Trim(), false);
+                if (pl != null && pl.rank < p.rank)
                 {
-                    if (pl != null && pl != p && pl.loggedIn && pl.username.ToLower().Equals(message.Trim().ToLower()) && pl.rank < p.rank)
-                    {
-                        ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
-                        Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e banned " + pl.username);
-                        return;
-                    }
-                    else if (pl != null && pl.rank >= p.rank && pl.username.ToLower().Equals(message.Trim().ToLower()) && pl != p)
-                    {
-                        p.SendMessage(0xFF, "You can't ban that person!");
-                        return;
-                    }
-                    else if (pl != null && p.loggedIn && !pl.disconnected && pl.username.Substring(0, message.Length).ToLower().Equals(message.ToLower().Trim()))
-                    {
-                        p.SendMessage(0xFF, "->" + Rank.GetColor(pl.rank) + pl.prefix + pl.username);
-                    }
+                    ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
+                    Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e banned " + pl.username);
+                    return;
                 }
-                p.SendMessage(0xFF, "Could not find player " + message);
+                else if (pl != null && pl.rank >= p.rank)
+                {
+                    p.SendMessage(0xFF, "You can't ban that person!");
+                }
             }
             else
             {
@@ -92,51 +78,36 @@ namespace uMiner
                     p.SendMessage(0xFF, "You can't ban yourself!");
                     return;
                 }
-                foreach (Player pl in Program.server.playerlist)
+                Player pl = Player.FindPlayer(p, ply, false);
+                if (pl != null && pl.rank < p.rank)
                 {
-                    if (pl != null && pl != p && pl.loggedIn && pl.username.ToLower().Equals(ply.Trim().ToLower()) && pl.rank < p.rank)
-                    {
-                        ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
-                        Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e banned " + pl.username + " (" + reason + ")");
-                        return;
-                    }
-                    else if (pl != null && pl.rank >= p.rank && pl.username.ToLower().Equals(ply.Trim().ToLower()) && pl != p)
-                    {
-                        p.SendMessage(0xFF, "You can't ban that person!");
-                        return;
-                    }
-                    else if (pl != null && p.loggedIn && !pl.disconnected && pl.username.Substring(0, ply.Length).ToLower().Equals(ply.ToLower().Trim()))
-                    {
-                        p.SendMessage(0xFF, "->" + Rank.GetColor(pl.rank) + pl.prefix + pl.username);
-                    }
-                    
+                    ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
+                    Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e banned " + pl.username + " (" + reason + ")");
                 }
-                p.SendMessage(0xFF, "Could not find player " + message);
+                else if (pl.rank >= p.rank)
+                {
+                    p.SendMessage(0xFF, "You can't ban that person!");
+                }
             }
         }
 
         public static void Unban(Player p, string message)
         {
             message = message.Trim().ToLower();
-            if (!Program.server.playerRanksDict.ContainsKey(message))
+
+            Player pl = Player.FindPlayer(p, message.Trim().ToLower(), false);
+            if(pl != null)
             {
-                p.SendMessage(0xFF, "Cannot find player " + message);
-                return;
+                ChangeRankCommand.Base(p, message, Rank.RankLevel("guest"));
             }
 
-            bool found = false;
-            foreach (Player pl in Program.server.playerlist)
+            else
             {
-                if (pl != null && pl != p && pl.username.ToLower().Equals(message))
+                if (!Program.server.playerRanksDict.ContainsKey(message))
                 {
-                    ChangeRankCommand.Base(p, message, Rank.RankLevel("guest"));
-                    found = true;
-                    break;
+                    p.SendMessage(0xFF, "Cannot find player " + message);
+                    return;
                 }
-            }
-
-            if (!found)
-            {
                 Program.server.playerRanksDict[message] = Rank.RankLevel("guest");
                 Program.server.saveRanks();
             }
@@ -153,27 +124,19 @@ namespace uMiner
                     p.SendMessage(0xFF, "You can't ipban yourself!");
                     return;
                 }
-                foreach (Player pl in Program.server.playerlist)
+                Player pl = Player.FindPlayer(p, message.Trim(), false);
+                if (pl != null && pl.rank < p.rank)
                 {
-                    if (pl != null && pl != p && pl.loggedIn && !pl.disconnected && pl.username.ToLower().Equals(message.Trim().ToLower()) && pl.rank < p.rank)
-                    {
-                        ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
-                        Program.server.ipbanned.Add(pl.ip);
-                        Program.server.saveIpBans();
-                        Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e ipbanned " + pl.username);
-                        return;
-                    }
-                    else if (pl != null && pl.rank >= p.rank && pl.username.ToLower().Equals(message.Trim().ToLower()) && pl != p)
-                    {
-                        p.SendMessage(0xFF, "You can't ipban that person!");
-                        return;
-                    }
-                    else if (pl != null && p.loggedIn && !pl.disconnected && pl.username.Substring(0, message.Length).ToLower().Equals(message.ToLower().Trim()))
-                    {
-                        p.SendMessage(0xFF, "->" + Rank.GetColor(pl.rank) + pl.prefix + pl.username);
-                    }
+                    ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
+                    Program.server.ipbanned.Add(pl.ip);
+                    Program.server.saveIpBans();
+                    Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e ipbanned " + pl.username);
+                    return;
                 }
-                p.SendMessage(0xFF, "Could not find player " + message);
+                else if (pl != null && pl.rank >= p.rank)
+                {
+                    p.SendMessage(0xFF, "You can't IPBan that person!");
+                }
             }
             else
             {
@@ -184,27 +147,19 @@ namespace uMiner
                     p.SendMessage(0xFF, "You can't ipban yourself!");
                     return;
                 }
-                foreach (Player pl in Program.server.playerlist)
+                Player pl = Player.FindPlayer(p, ply, false);
+                if (pl != null && pl.rank < p.rank && !pl.ip.Equals("127.0.0.1"))
                 {
-                    if (pl != null && pl != p && pl.loggedIn && !pl.disconnected && pl.username.ToLower().Equals(ply.Trim().ToLower()) && pl.rank < p.rank)
-                    {
-                        ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
-                        Program.server.ipbanned.Add(pl.ip);
-                        Program.server.saveIpBans();
-                        Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e ipbanned " + pl.username + " (" + reason + ")");
-                        return;
-                    }
-                    else if (pl != null && pl.rank >= p.rank && pl.username.ToLower().Equals(ply.Trim().ToLower()) && pl != p)
-                    {
-                        p.SendMessage(0xFF, "You can't ipban that person!");
-                        return;
-                    }
-                    else if (pl != null && p.loggedIn && !pl.disconnected && pl.username.Substring(0, ply.Length).ToLower().Equals(ply.ToLower().Trim()))
-                    {
-                        p.SendMessage(0xFF, "->" + Rank.GetColor(pl.rank) + pl.prefix + pl.username);
-                    }
+                    ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
+                    Program.server.ipbanned.Add(pl.ip);
+                    Program.server.saveIpBans();
+                    Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e ipbanned " + pl.username + " (" + reason + ")");
+                    return;
                 }
-                p.SendMessage(0xFF, "Could not find player " + message);
+                else if (pl.rank >= p.rank || pl.ip.Equals("127.0.0.1"))
+                {
+                    p.SendMessage(0xFF, "You can't IPBan that person!");
+                }
             }
         }
 
@@ -218,6 +173,7 @@ namespace uMiner
             }
 
             Program.server.ipbanned.Remove(message);
+            Program.server.saveIpBans();
 
             foreach (Player pl in Program.server.playerlist)
             {
