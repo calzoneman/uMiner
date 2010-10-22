@@ -21,7 +21,7 @@ namespace uMiner
             if (!message.Trim().Contains(" "))
             {
                 Player pl = Player.FindPlayer(p, message.Trim(), false);
-                if (pl != null && pl.rank <= p.rank)
+                if (pl != null && (pl.rank <= p.rank || p.username.Equals("[console]")))
                 {
                     pl.Kick("Kicked by " + Rank.GetColor(p.rank) + p.prefix + p.username + "&e", false);
                 }
@@ -36,7 +36,7 @@ namespace uMiner
                 string ply = message.Trim().Substring(0, message.Trim().IndexOf(" "));
                 string reason = message.Trim().Substring(message.Trim().IndexOf(" ") + 1);
                 Player pl = Player.FindPlayer(p, ply, false);
-                if (pl != null && pl.rank <= p.rank)
+                if (pl != null && (pl.rank <= p.rank || p.username.Equals("[console]")))
                 {
                     pl.Kick(reason, false);
                 }
@@ -58,7 +58,7 @@ namespace uMiner
                     return;
                 }
                 Player pl = Player.FindPlayer(p, message.Trim(), false);
-                if (pl != null && pl.rank < p.rank)
+                if (pl != null && (pl.rank < p.rank || p.username.Equals("[console]")))
                 {
                     ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
                     Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e banned " + pl.username);
@@ -79,7 +79,7 @@ namespace uMiner
                     return;
                 }
                 Player pl = Player.FindPlayer(p, ply, false);
-                if (pl != null && pl.rank < p.rank)
+                if (pl != null && (pl.rank < p.rank || p.username.Equals("[console]")))
                 {
                     ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
                     Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e banned " + pl.username + " (" + reason + ")");
@@ -125,7 +125,7 @@ namespace uMiner
                     return;
                 }
                 Player pl = Player.FindPlayer(p, message.Trim(), false);
-                if (pl != null && pl.rank < p.rank)
+                if (pl != null && (pl.rank < p.rank || p.username.Equals("[console]")))
                 {
                     ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
                     Program.server.ipbanned.Add(pl.ip);
@@ -148,7 +148,7 @@ namespace uMiner
                     return;
                 }
                 Player pl = Player.FindPlayer(p, ply, false);
-                if (pl != null && pl.rank < p.rank && !pl.ip.Equals("127.0.0.1"))
+                if (pl != null && (pl.rank < p.rank || p.username.Equals("[console]")) && !pl.ip.Equals("127.0.0.1"))
                 {
                     ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
                     Program.server.ipbanned.Add(pl.ip);

@@ -1,4 +1,12 @@
-﻿using System;
+﻿/**
+ * uMiner - A lightweight custom Minecraft Classic server written in C#
+ * Copyright 2010 Calvin "calzoneman" Montgomery
+ * 
+ * Licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License
+ * (see http://creativecommons.org/licenses/by-sa/3.0/, or LICENSE.txt for a full license
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -48,6 +56,9 @@ namespace uMiner
                                 GenericSpread(block.x, block.y, block.z, block.type, false);
                                 CheckWaterLavaCollide(block.x, block.y, block.z, block.type);
                                 break;
+                            case Blocks.unflood:
+                                Unflood(block.x, block.y, block.z, block.type);
+                                break;
                             case Blocks.sponge:
                                 NewSponge(block.x, block.y, block.z);
                                 break;
@@ -90,6 +101,8 @@ namespace uMiner
                     return 200;
                 case Blocks.lava:
                     return 800;
+                case Blocks.unflood:
+                    return 200;
                 default:
                     return 0;
             }
@@ -127,6 +140,40 @@ namespace uMiner
             {
                 world.SetTile(x, y + 1, z, type);
             }
+        }
+
+        public void Unflood(short x, short y, short z, byte type)
+        {
+            if (world.GetTile(x, y, z) != type)
+            {
+                return;
+            }
+
+            if (Blocks.Liquid(world.GetTile(x + 1, y, z)))
+            {
+                world.SetTile(x + 1, y, z, type);
+            }
+            if (Blocks.Liquid(world.GetTile(x - 1, y, z)))
+            {
+                world.SetTile(x - 1, y, z, type);
+            }
+            if (Blocks.Liquid(world.GetTile(x, y, z + 1)))
+            {
+                world.SetTile(x, y, z + 1, type);
+            }
+            if (Blocks.Liquid(world.GetTile(x, y, z - 1)))
+            {
+                world.SetTile(x, y, z - 1, type);
+            }
+            if (Blocks.Liquid(world.GetTile(x, y - 1, z)))
+            {
+                world.SetTile(x, y - 1, z, type);
+            }
+            if (Blocks.Liquid(world.GetTile(x, y + 1, z)))
+            {
+                world.SetTile(x, y + 1, z, type);
+            }
+            world.SetTileNoPhysics(x, y, z, Blocks.air);
         }
 
         public void CheckWaterLavaCollide(int x, int y, int z, byte type)

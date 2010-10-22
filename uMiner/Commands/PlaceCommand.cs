@@ -74,6 +74,19 @@ namespace uMiner
                         p.SendMessage(0xFF, "You are not allowed to use that binding!");
                     }
                     break;
+                case "unflood":
+                case "deflood":
+                case "air_flood":
+                    if (p.rank >= Rank.RankLevel("operator"))
+                    {
+                        p.binding = Bindings.Unflood;
+                        p.SendMessage(0xFF, "Binding set to &funflood");
+                    }
+                    else
+                    {
+                        p.SendMessage(0xFF, "You are not allowed to use that binding!");
+                    }
+                    break;
                 default:
                     Help(p);
                     break;
@@ -88,7 +101,7 @@ namespace uMiner
             string available = "&9safewater(sw)&e, &csafelava(sl)&e, &fnone(off)&e, &agrass";
             if (p.rank >= Rank.RankLevel("operator"))
             {
-                available += "&e, &0admin(adminium, admincrete)&e, &1activewater(aw)&e, &4activelava(al)";
+                available += "&e, &0admin(adminium, admincrete)&e, &1activewater(aw)&e, &4activelava(al)&e, &funflood(deflood, air_flood)";
             }
             p.SendMessage(0xFF, "-> Available bindings: " + available);
         }
@@ -103,6 +116,7 @@ namespace uMiner
         ActiveWater = 8,
         SafeWater = 9,
         ActiveLava = 10,
-        SafeLava = 11
+        SafeLava = 11,
+        Unflood = 100
     }
 }

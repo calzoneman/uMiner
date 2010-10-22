@@ -80,7 +80,7 @@ namespace uMiner
 
         public bool SetTile(int x, int y, int z, byte type)
         {
-            if (x < 0 || y < 0 || z < 0 || x >= this.width || y >= this.height || z >= this.depth || type < 0 || type > 49)
+            if (x < 0 || y < 0 || z < 0 || x >= this.width || y >= this.height || z >= this.depth || type < 0 || !Blocks.blockNames.ContainsValue(type))
             {
                 return false;
             }
@@ -97,7 +97,18 @@ namespace uMiner
                 Program.server.physics.DeleteSponge(x, y, z);
             }
             this.blocks[(y * this.depth + z) * this.width + x] = type;
-            Player.GlobalBlockchange((short)x, (short)y, (short)z, type);
+            Player.GlobalBlockchange((short)x, (short)y, (short)z, Blocks.ConvertType(type));
+            return true;
+        }
+
+        public bool SetTileNoPhysics(int x, int y, int z, byte type)
+        {
+            if (x < 0 || y < 0 || z < 0 || x >= this.width || y >= this.height || z >= this.depth || type < 0 || !Blocks.blockNames.ContainsValue(type))
+            {
+                return false;
+            }
+            this.blocks[(y * this.depth + z) * this.width + x] = type;
+            Player.GlobalBlockchange((short)x, (short)y, (short)z, Blocks.ConvertType(type));
             return true;
         }
 
@@ -105,6 +116,13 @@ namespace uMiner
         {
             try
             {
+                byte[] saveblocks = new byte[blocks.Length];
+                blocks.CopyTo(saveblocks, 0);
+                for (int i = 0; i < saveblocks.Length; i++)
+                {
+                    saveblocks[i] = Blocks.ConvertType(saveblocks[i]);
+                }
+
                 GZipStream gzout = new GZipStream(new FileStream("maps/" + filename, FileMode.OpenOrCreate), CompressionMode.Compress);
                 gzout.Write(BitConverter.GetBytes(0xebabefac), 0, 4);
                 gzout.Write(BitConverter.GetBytes(width), 0, 2);
@@ -115,7 +133,7 @@ namespace uMiner
                 gzout.Write(BitConverter.GetBytes(spawnz), 0, 2);
                 gzout.WriteByte(this.srotx);
                 gzout.WriteByte(this.sroty);
-                gzout.Write(this.blocks, 0, this.blocks.Length);
+                gzout.Write(saveblocks, 0, saveblocks.Length);
 
                 //gzout.BaseStream.Close();
                 gzout.Close();

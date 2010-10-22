@@ -17,6 +17,7 @@ namespace uMiner
     {
         public delegate void CommandHandler(Player p, string message);
         public static Dictionary<string, Command> commands = new Dictionary<string, Command>();
+        public static Dictionary<string, Command> consoleSafe = new Dictionary<string, Command>();
 
         public static void Init()
         {
@@ -40,6 +41,23 @@ namespace uMiner
             commands.Add("unipban", new Command(DisconnectCommand.UnbanIp, Rank.RankLevel("operator")));
             commands.Add("where", new Command(WhereCommand.Where, Rank.RankLevel("player")));
             commands.Add("who", new Command(WhoCommand.Who, Rank.RankLevel("player")));
+
+            consoleSafe.Add("ban",      commands["ban"]);
+            consoleSafe.Add("colors",   commands["colors"]);
+            consoleSafe.Add("guest",    commands["guest"]);
+            consoleSafe.Add("help",     commands["help"]);
+            consoleSafe.Add("ipban",    commands["ipban"]);
+            consoleSafe.Add("kick",     commands["kick"]);
+            consoleSafe.Add("newworld", commands["newworld"]);
+            consoleSafe.Add("owner",    new Command(ChangeRankCommand.Owner, Rank.RankLevel("owner")));
+            consoleSafe.Add("operator", commands["operator"]);
+            consoleSafe.Add("player",   commands["player"]);
+            consoleSafe.Add("ranks",    commands["ranks"]);
+            consoleSafe.Add("say",      commands["say"]);
+            consoleSafe.Add("unban",    commands["unban"]);
+            consoleSafe.Add("unipban",  commands["unipban"]);
+            consoleSafe.Add("where",    commands["where"]);
+            consoleSafe.Add("who",      commands["who"]);
         }
 
         public static void HandleCommand(Player p, string cmd, string msg)

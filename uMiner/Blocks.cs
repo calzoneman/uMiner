@@ -58,9 +58,13 @@ namespace uMiner
   	    public const byte bookcase 			= (byte)47;
   	    public const byte mossycobble		= (byte)48;
   	    public const byte obsidian 			= (byte)49;
+
+        //Custom blocks
+        public const byte unflood           = (byte)100;
         #endregion
 
         public static Dictionary<string, byte> blockNames = new Dictionary<string, byte>();
+        public static Dictionary<byte, byte> conversions = new Dictionary<byte, byte>();
 
         public static void Init()
         {
@@ -142,6 +146,12 @@ namespace uMiner
             blockNames.Add("mossycobble", mossycobble);
             blockNames.Add("obsidian", obsidian);
             blockNames.Add("obby", obsidian);
+
+            blockNames.Add("unflood", unflood);
+            blockNames.Add("deflood", unflood);
+            blockNames.Add("air_flood", unflood);
+
+            conversions.Add(100, 0);
         }
 
         public static bool BasicPhysics(byte type)
@@ -153,6 +163,7 @@ namespace uMiner
                 case lava:
                 case sponge:
                 case staircasestep:
+                case unflood:
                     return true;
                 default:
                     return false;
@@ -189,6 +200,16 @@ namespace uMiner
                 default:
                     return false;
             }
+        }
+
+        public static byte ConvertType(byte old)
+        {
+            if (old <= 49) { return old; }
+            if (conversions.ContainsKey(old))
+            {
+                return conversions[old];
+            }
+            return 0;
         }
     }
 }

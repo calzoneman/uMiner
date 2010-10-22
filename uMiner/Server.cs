@@ -38,6 +38,7 @@ namespace uMiner
         //Players
         public Player[] playerlist;
         public List<string> ipbanned;
+        private ConsolePlayer consolePlayer;
 
         //Map
         public World world;
@@ -125,6 +126,7 @@ namespace uMiner
 
             //Load Commands
             Command.Init();
+            consolePlayer = new ConsolePlayer();
 
             //Load blocks
             Blocks.Init();            
@@ -227,7 +229,14 @@ namespace uMiner
             while (true)  //Main Loop
             {
                 if (!running) { return; }
-                System.Threading.Thread.Sleep(1000); 
+                try
+                {
+                    consolePlayer.ExecuteCommand(Console.ReadLine());
+                }
+                catch
+                {
+                }
+                System.Threading.Thread.Sleep(1000);
             }
         }
 
@@ -240,9 +249,9 @@ namespace uMiner
                     DateTime start = DateTime.Now;
                     physics.Update();
                     TimeSpan took = DateTime.Now - start;
-                    if (took.TotalMilliseconds < 50)
+                    if (took.TotalMilliseconds < 200)
                     {
-                        System.Threading.Thread.Sleep(50 - (int)took.TotalMilliseconds);
+                        System.Threading.Thread.Sleep(200 - (int)took.TotalMilliseconds);
                     }
                 }
                 catch (Exception e)

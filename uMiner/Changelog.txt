@@ -6,6 +6,14 @@
  * (see http://creativecommons.org/licenses/by-sa/3.0/, or LICENSE.txt for a full license
  */
  
+ Revision 19
+ -----------
+ -Added separate Queue<Packet> for blockchanges (attempt to reduce lag)
+ -Added unflood/deflood/air_flood (whatever you want to call it) and support for additional blocktypes
+ -Added console commands (console safe commands must be added to Command.consoleSafe Dictionary)
+ -Added /owner command (only added to consoleSafe)
+ -Fixed autocomplete for rank commands
+ 
  Revision 18
  -----------
  -Fixed SendMap() sending the dimensions in the wrong order (facepalm)

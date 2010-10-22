@@ -69,6 +69,11 @@ namespace uMiner
                     Console.Write("[" + type.ToString() + "] ");
                     Console.ForegroundColor = ConsoleColor.Gray;
                     break;
+                case LogType.CCmd:
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("[" + type.ToString() + "] ");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    break;
                 case LogType.Warning:
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.Write("[" + type.ToString() + "] ");
@@ -83,10 +88,10 @@ namespace uMiner
                     Console.Write("[Unknown Type]");
                     break;
             }
-            if (logWithColor && type.ToString().Equals("Chat"))
+            if (logWithColor && "Chat|CCmd".Contains(type.ToString()))
             {
                 bool defaultToYellow = false;
-                if (data.Length > 8 && data.Trim().Substring(0, 8).Equals("(Global)"))
+                if (data.Length > 8 && (data.Trim().Substring(0, 8).Equals("(Global)") || type.ToString().Equals("CCmd")))
                 {
                     defaultToYellow = true;
                 }
@@ -218,7 +223,8 @@ namespace uMiner
             Info,
             Warning,
             Error,
-            Chat
+            Chat,
+            CCmd
         }
     }
 }

@@ -30,6 +30,11 @@ namespace uMiner
             Base(p, message, Rank.RankLevel("operator"));
         }
 
+        public static void Owner(Player p, string message)
+        {
+            Base(p, message, Rank.RankLevel("owner"));
+        }
+
         public static void Base(Player p, string message, byte newrank)
         {
             if (message.Trim().Equals(""))
@@ -38,83 +43,77 @@ namespace uMiner
                 return;
             }
 
-            foreach (Player pl in Program.server.playerlist)
+            Player pl = uMiner.Player.FindPlayer(p, message, false);
+            if (pl != null)
             {
-                if (pl != null && pl.loggedIn && !pl.disconnected && pl.username.ToLower().Equals(message.Trim().ToLower()))
+                if (pl.username.Equals(p.username))
                 {
-                    if (pl.username.Equals(p.username))
-                    {
-                        p.SendMessage(0xFF, "You can't change your own rank!");
-                    }
-                    if (pl.rank < newrank || p.rank > pl.rank)
-                    {
-                        byte oldRank = pl.rank;
-                        pl.rank = newrank;
-                        Program.server.playerRanksDict[pl.username.ToLower()] = pl.rank;
-                        Program.server.saveRanks();
-
-                        if (newrank == 0)
-                        {
-                            pl.prefix = "[:(]";
-                        }
-                        else if (newrank < Rank.RankLevel("operator"))
-                        {
-                            pl.prefix = "";
-                        }
-                        else if (newrank == Rank.RankLevel("operator"))
-                        {
-                            pl.prefix = "+";
-                        }
-
-                        if (newrank < Rank.RankLevel("player"))
-                        {
-                            pl.binding = Bindings.None;
-                        }
-                        
-                        //If the person was OP before, disable adminium editing
-                        //Vice versa as well
-                        if (oldRank >= Rank.RankLevel("operator") && newrank < Rank.RankLevel("operator"))
-                        {
-                            Packet deop = new Packet(2);
-                            deop.Append((byte)ServerPacket.RankUpdate);
-                            deop.Append((byte)0x0);
-                            pl.SendPacket(deop);
-                        }
-                        else if (oldRank < Rank.RankLevel("operator") && newrank >= Rank.RankLevel("operator"))
-                        {
-                            Packet deop = new Packet(2);
-                            deop.Append((byte)ServerPacket.RankUpdate);
-                            deop.Append((byte)0x64);
-                            pl.SendPacket(deop);
-                        }
-
-                        //Despawn and respawn player
-                        Packet despawn = new Packet(2);
-                        despawn.Append((byte)ServerPacket.PlayerDie);
-                        despawn.Append(pl.id);
-                        foreach (Player ply in Program.server.playerlist)
-                        {
-                            if (ply != null && ply != pl && ply.loggedIn && !ply.disconnected)
-                            {
-                                ply.SendPacket(despawn);
-                            }
-                        }
-                        uMiner.Player.GlobalSpawnPlayer(pl);
-                        uMiner.Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e set " + Rank.GetColor(pl.rank) + pl.prefix + pl.username + "&e's rank to " + Rank.GetColor(newrank) + Rank.RankName(newrank) + "&e");
-                    }
-                    else
-                    {
-                        p.SendMessage(0xFF, "Player " + Rank.GetColor(pl.rank) + pl.prefix + pl.username + "&e cannot have rank set to " + Rank.GetColor(newrank) + Rank.RankName(newrank));
-                    }
-                    return;
+                    p.SendMessage(0xFF, "You can't change your own rank!");
                 }
-                else if (pl != null && pl.loggedIn && !pl.disconnected && pl.username.Length >= message.Length && pl.username.Substring(0, message.Length).ToLower().Equals(message.ToLower().Trim()))
+                if (pl.rank < newrank || p.rank > pl.rank || p.username.Equals("[console]"))
                 {
-                    p.SendMessage(0xFF, "-> " + Rank.GetColor(pl.rank) + pl.prefix + pl.username);
+                    byte oldRank = pl.rank;
+                    pl.rank = newrank;
+                    Program.server.playerRanksDict[pl.username.ToLower()] = pl.rank;
+                    Program.server.saveRanks();
+
+                    if (newrank == 0)
+                    {
+                        pl.prefix = "[:(]";
+                    }
+                    else if (newrank < Rank.RankLevel("operator"))
+                    {
+                        pl.prefix = "";
+                    }
+                    else if (newrank == Rank.RankLevel("operator"))
+                    {
+                        pl.prefix = "+";
+                    }
+                    else if (newrank == Rank.RankLevel("owner"))
+                    {
+                        pl.prefix = "@";
+                    }
+
+                    //Clear the player's binding as a safeguard
+                    pl.binding = Bindings.None;
+                    
+                    //If the person was OP before, disable adminium editing
+                    //Vice versa as well
+                    if (oldRank >= Rank.RankLevel("operator") && newrank < Rank.RankLevel("operator"))
+                    {
+                        Packet deop = new Packet(2);
+                        deop.Append((byte)ServerPacket.RankUpdate);
+                        deop.Append((byte)0x0);
+                        pl.SendPacket(deop);
+                    }
+                    else if (oldRank < Rank.RankLevel("operator") && newrank >= Rank.RankLevel("operator"))
+                    {
+                        Packet deop = new Packet(2);
+                        deop.Append((byte)ServerPacket.RankUpdate);
+                        deop.Append((byte)0x64);
+                        pl.SendPacket(deop);
+                    }
+
+                    //Despawn and respawn player
+                    Packet despawn = new Packet(2);
+                    despawn.Append((byte)ServerPacket.PlayerDie);
+                    despawn.Append(pl.id);
+                    foreach (Player ply in Program.server.playerlist)
+                    {
+                        if (ply != null && ply != pl && ply.loggedIn && !ply.disconnected)
+                        {
+                            ply.SendPacket(despawn);
+                        }
+                    }
+                    uMiner.Player.GlobalSpawnPlayer(pl);
+                    uMiner.Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e set " + Rank.GetColor(pl.rank) + pl.prefix + pl.username + "&e's rank to " + Rank.GetColor(newrank) + Rank.RankName(newrank) + "&e");
                 }
+                else
+                {
+                    p.SendMessage(0xFF, "Player " + Rank.GetColor(pl.rank) + pl.prefix + pl.username + "&e cannot have rank set to " + Rank.GetColor(newrank) + Rank.RankName(newrank));
+                }
+                return;
             }
-
-            p.SendMessage(0xFF, "Could not find player " + message);
         }
 
         public static void Help(Player p, string cmd)

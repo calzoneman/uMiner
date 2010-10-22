@@ -45,6 +45,7 @@ namespace uMiner
         public BinaryReader inputReader;
         public BinaryWriter outputWriter;
         public Queue<Packet> outQueue;
+        public Queue<Packet> blockQueue;
 
         public Thread IOThread;
 
@@ -66,26 +67,33 @@ namespace uMiner
 
         public Player(TcpClient client, string ip, byte id)
         {
-            this.username = "player";
-            this.plyClient = client;
-            this.x = 0;
-            this.y = 0;
-            this.z = 0;
-            this.rotx = 0;
-            this.roty = 0;
-            this.prefix = "";
-            this.id = id;
-            this.ip = ip;
+            try
+            {
+                this.username = "player";
+                this.plyClient = client;
+                this.x = 0;
+                this.y = 0;
+                this.z = 0;
+                this.rotx = 0;
+                this.roty = 0;
+                this.prefix = "";
+                this.id = id;
+                this.ip = ip;
 
-            this.world = new World(16, 16, 16);
+                this.world = null;
 
-            this.outQueue = new Queue<Packet>();
-            this.IOThread = new Thread(PlayerIO);
-            this.outputWriter = new BinaryWriter(client.GetStream());
-            this.inputReader = new BinaryReader(client.GetStream());
+                this.outQueue = new Queue<Packet>();
+                this.blockQueue = new Queue<Packet>();
+                this.IOThread = new Thread(PlayerIO);
+                this.outputWriter = new BinaryWriter(client.GetStream());
+                this.inputReader = new BinaryReader(client.GetStream());
 
-            this.IOThread.IsBackground = true;
-            this.IOThread.Start();
+                this.IOThread.IsBackground = true;
+                this.IOThread.Start();
+            }
+            catch
+            {
+            }
         }
 
         public void PlayerIO()
@@ -107,11 +115,29 @@ namespace uMiner
                     //Send whatever remains in the queue
                     lock (queueLock)
                     {
-
+                        //Process generic packets
                         while (outQueue.Count > 0)
                         {
                             Packet p = outQueue.Dequeue();
-                            this.outputWriter.Write(p.raw);
+                            if (this.world == null && !"01234".Contains(p.raw[0].ToString())) //Process all login/map packets first
+                            {
+                                outQueue.Enqueue(p);
+                            }
+                            else 
+                            {
+                                this.outputWriter.Write(p.raw);
+                            }
+                        }
+                        //Process blockchanges (separation should reduce lag)
+                        int i = 0;
+                        if (this.world != null)
+                        {
+                            while (blockQueue.Count > 0 && i < 500)
+                            {
+                                Packet p = blockQueue.Dequeue();
+                                this.outputWriter.Write(p.raw);
+                                if (i % 2 == 0) { Thread.Sleep(1); } 
+                            }
                         }
                     }
                     if (((TimeSpan)(DateTime.Now - pingTime)).TotalSeconds > 2)
@@ -396,7 +422,7 @@ namespace uMiner
                 return;
             }
 
-            if (type > 49)
+            if (type > 49 && type != (byte)this.binding)
             {
                 Kick("Illegal tile type", false);
                 return;
@@ -416,7 +442,8 @@ namespace uMiner
         #endregion
 
         #region Sending
-        public void SendMessage(byte pid, string message)
+        //Marked virtual so ConsolePlayer can override it
+        public virtual void SendMessage(byte pid, string message)
         {
             try
             {
@@ -542,7 +569,7 @@ namespace uMiner
                 BitConverter.GetBytes(IPAddress.HostToNetworkOrder(w.blocks.Length)).CopyTo(buffer, 0);
                 for (int i = 0; i < w.blocks.Length; ++i)
                 {
-                    buffer[4 + i] = w.blocks[i];
+                    buffer[4 + i] = Blocks.ConvertType(w.blocks[i]);
                 }
                 buffer = GZip(buffer);
                 int number = (int)Math.Ceiling(((double)buffer.Length) / 1024);
@@ -672,7 +699,14 @@ namespace uMiner
         {
             lock (queueLock)
             {
-                this.outQueue.Enqueue(p);
+                if (p.raw[0] == (byte)ServerPacket.Blockchange)
+                {
+                    this.blockQueue.Enqueue(p);
+                }
+                else
+                {
+                    this.outQueue.Enqueue(p);
+                }
             }
         }
 
