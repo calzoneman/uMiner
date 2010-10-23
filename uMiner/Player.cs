@@ -286,6 +286,9 @@ namespace uMiner
             loggedIn = true;
             Program.server.plyCount++;
 
+            //Init any player-specific plugins
+            //ExamplePlugins.Init(this);
+
             //If they are ranked operator or admin, give them a snazzy prefix
             if (rank == Rank.RankLevel("operator")) { prefix = "+"; }
             if (rank == Rank.RankLevel("owner")) { prefix = "@"; }
@@ -302,7 +305,7 @@ namespace uMiner
             }
             loginMessage += username + "&e joined the game";
             GlobalMessage(loginMessage);
-            if (this.OnLogin != null)
+            if (this.OnLogin != null) //Call the OnLogin Event
             {
                 OnLogin(this);
             }

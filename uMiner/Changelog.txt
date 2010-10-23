@@ -6,6 +6,10 @@
  * (see http://creativecommons.org/licenses/by-sa/3.0/, or LICENSE.txt for a full license
  */
  
+ Revision 20
+ -----------
+ -Fixed bin(monodevelop) files being outdated
+ 
  Revision 19
  -----------
  -Added separate Queue<Packet> for blockchanges (attempt to reduce lag)

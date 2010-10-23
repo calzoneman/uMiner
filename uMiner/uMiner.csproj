@@ -73,8 +73,7 @@
     <Compile Include="Heartbeat.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Packet.cs" />
-    <Compile Include="Plugins\TestPlugins.cs" />
-    <Compile Include="Plugins\LavaDeath.cs" />
+    <Compile Include="Plugins\ExamplePlugins.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol.cs" />
