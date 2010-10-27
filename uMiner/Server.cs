@@ -131,6 +131,33 @@ namespace uMiner
             //Load blocks
             Blocks.Init();            
 
+            //Load special chars
+            Player.specialChars = new Dictionary<string, char>();
+            Player.specialChars.Add(@"\:D", (char)2);        //☻
+            Player.specialChars.Add(@"\<3", (char)3);        //♥
+            Player.specialChars.Add(@"\<>", (char)4);        //♦
+            Player.specialChars.Add(@"\club", (char)5);      //♣
+            Player.specialChars.Add(@"\spade", (char)6);     //♠
+            Player.specialChars.Add(@"\boy", (char)11);      //♂
+            Player.specialChars.Add(@"\girl", (char)12);     //♀
+            Player.specialChars.Add(@"\8note", (char)13);    //♪
+            Player.specialChars.Add(@"\16note", (char)14);   //♫
+            Player.specialChars.Add(@"\*", (char)15);        //☼
+            Player.specialChars.Add(@"\>", (char)16);        //►
+            Player.specialChars.Add(@"\<-", (char)27);       //←
+            Player.specialChars.Add(@"\<", (char)17);        //◄
+            Player.specialChars.Add(@"\updn", (char)18);     //↕
+            Player.specialChars.Add(@"\2!", (char)19);       //‼
+            Player.specialChars.Add(@"\p", (char)20);        //¶
+            Player.specialChars.Add(@"\sec", (char)21);      //§
+            Player.specialChars.Add(@"\|up", (char)24);      //↑
+            Player.specialChars.Add(@"\|dn", (char)25);      //↓
+            Player.specialChars.Add(@"\->", (char)26);       //→
+            //** The ← symbol was moved before ◄ due to parsing order issues
+            Player.specialChars.Add(@"\lr", (char)29);       //↔
+            Player.specialChars.Add(@"\up", (char)30);       //▲
+            Player.specialChars.Add(@"\dn", (char)31);       //▼
+
             //Load ranks
             playerRanksDict = new Dictionary<string, byte>();
             try

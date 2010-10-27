@@ -5,6 +5,15 @@
  * Licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License
  * (see http://creativecommons.org/licenses/by-sa/3.0/, or LICENSE.txt for a full license
  */
+
+ Revision 21 - Special characters :D
+ -----------
+ -Fixed not being able to place wood/planks/whatever  (wasn't in the allowed blocks Dictionary - epic fail)
+ -Fixed commands being logged before "player uses /command"
+ -Players of rank player or higher can use %0-9a-f color codes in chat (see /colors)
+ -Special characters can be used by typing special codes; see /chars in-game
+ -Hopefully fixed an issue with concurrent logging (wasn't thread-safe)
+ 
  
  Revision 20
  -----------

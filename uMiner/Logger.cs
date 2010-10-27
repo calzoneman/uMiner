@@ -20,6 +20,8 @@ namespace uMiner
         public List<string> buffer = new List<string>();
         public bool logWithColor = false;
 
+        public object mutex = new object();
+
         public Logger()
         {
             log("Logger initialized", LogType.Info);
@@ -27,23 +29,26 @@ namespace uMiner
 
         public void log(string data, LogType type)
         {
-            string display = "[" + DateTime.Now.ToString() + "]" + "[" + type.ToString() + "] " + StripColor(data);
-            buffer.Add(display);
-            logToConsole(data, type);
-            try
+            lock (mutex)
             {
-                StreamWriter fWriter = new StreamWriter(File.Open(filename, FileMode.Append));
-                fWriter.WriteLine(display);
-                fWriter.Close();
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine("[" + DateTime.Now.ToString() + "]" + "[ERROR] Failed to write to logfile!");
-                Console.WriteLine("Exception: " + e.ToString());
-            }
-            if (buffer.Count > 64)
-            {
-                buffer.Clear();
+                string display = "[" + DateTime.Now.ToString() + "]" + "[" + type.ToString() + "] " + StripColor(data);
+                buffer.Add(display);
+                logToConsole(data, type);
+                try
+                {
+                    StreamWriter fWriter = new StreamWriter(File.Open(filename, FileMode.Append));
+                    fWriter.WriteLine(display);
+                    fWriter.Close();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("[" + DateTime.Now.ToString() + "]" + "[ERROR] Failed to write to logfile!");
+                    Console.WriteLine("Exception: " + e.ToString());
+                }
+                if (buffer.Count > 64)
+                {
+                    buffer.Clear();
+                }
             }
         }
 

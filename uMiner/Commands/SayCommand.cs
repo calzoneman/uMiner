@@ -19,6 +19,7 @@ namespace uMiner
         {
             StringBuilder finalMsg = new StringBuilder();
             message = message.Trim();
+            message = Player.ParseSpecialChar(message);
             for (int i = 0; i < message.Length; i++)
             {
                 char ch = message[i];
@@ -29,13 +30,14 @@ namespace uMiner
                 finalMsg.Append(ch);
             }
             finalMsg.Append("&e");
-            Player.GlobalMessage(finalMsg.ToString());
+            Player.GlobalMessage(Player.Sanitize(finalMsg.ToString()));
         }
 
         public static void Help(Player p)
         {
             p.SendMessage(0xFF, "/say message - Sends message as a global announcement");
             p.SendMessage(0xFF, "-> use %0-9a-f for color codes (see /colors)");
+            p.SendMessage(0xFF, "-> use \\code for special chars (see /chars)");
         }
     }
 }

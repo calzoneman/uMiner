@@ -75,6 +75,8 @@ namespace uMiner
             blockNames.Add("dirt", dirt);
             blockNames.Add("cobblestone", cobblestone);
             blockNames.Add("cobble", cobblestone);
+            blockNames.Add("wood", wood);
+            blockNames.Add("planks", wood);
             blockNames.Add("shrub", shrub);
             blockNames.Add("tree", shrub);
             blockNames.Add("adminium", adminium);

@@ -21,12 +21,32 @@ namespace uMiner
             p.SendMessage(0, "&8%8 &9%9 &a%a &b%b &c%c &d%d &e%e &f%f");
         }
 
+        public static void Chars(Player p, string message)
+        {
+            p.SendMessage(0xFF, "Character Codes: ");
+            string temp = String.Empty;
+            foreach (KeyValuePair<string, char> rule in Player.specialChars)
+            {
+                temp += (("&c" + rule.Key + "&e ").PadRight(8) + rule.Value).PadRight(15);
+                if (temp.Length >= 60)
+                {
+                    p.SendMessage(0x0, temp);
+                    temp = String.Empty;
+                }
+            }
+            p.SendMessage(0x0, temp);
+            //p.SendMessage(0x0, @"&c\# &e Displays the character with byte id #");
+        }
+
         public static void Help(Player p, string cmd)
         {
             switch (cmd)
             {
                 case "colors":
                     p.SendMessage(0xFF, "/colors - displays information about color codes");
+                    break;
+                case "chars":
+                    p.SendMessage(0xFF, "/chars - displays information about special characters");
                     break;
                 default:
                     break;

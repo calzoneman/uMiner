@@ -41,6 +41,8 @@ namespace uMiner
 
         object queueLock = new object();
 
+        public static Dictionary<string, char> specialChars;
+
         public TcpClient plyClient;
         public BinaryReader inputReader;
         public BinaryWriter outputWriter;
@@ -359,8 +361,9 @@ namespace uMiner
         {
             this.inputReader.ReadByte();
             string rawmsg = Encoding.ASCII.GetString(this.inputReader.ReadBytes(64)).Trim();
+            rawmsg = ParseSpecialChar(rawmsg);
             //Test for commands
-            if (rawmsg.Trim()[0] == '/')
+            if (!rawmsg.Trim().Equals("") && rawmsg.Trim()[0] == '/')
             {
                 string cmd = "", args = "";
                 if (rawmsg.Contains(" "))
@@ -375,7 +378,8 @@ namespace uMiner
 
             string message = "";
             message = Rank.GetColor(rank) + "<" + prefix + username + "> &f" + rawmsg;
-            Program.server.logger.log(message, Logger.LogType.Chat);
+            if (rank >= Rank.RankLevel("player")) { message = ParseColors(message); }
+            Program.server.logger.log(Sanitize(message), Logger.LogType.Chat);
 
             foreach (Player p in Program.server.playerlist)
             {
@@ -456,7 +460,7 @@ namespace uMiner
                     Packet msgPacket = new Packet(66);
                     msgPacket.Append((byte)ServerPacket.Message);
                     msgPacket.Append(pid);
-                    msgPacket.Append(line);
+                    msgPacket.Append(Sanitize(line));
                     this.SendPacket(msgPacket);
                 }
             }
@@ -809,6 +813,81 @@ namespace uMiner
 
         #region Data Handlers
 
+        public static string Sanitize(string input)
+        {
+            input = input.Trim((char)0x20);
+            StringBuilder output = new StringBuilder();
+            for (int i = 0; i < input.Length; i++)
+            {
+                if ((int)input[i] >= 128)
+                {
+                    output.Append(' ');
+                }
+                else
+                {
+                    output.Append(input[i]);
+                    
+                }
+            }
+
+            if ((int)(input[input.Length - 1]) < 0x20)
+            {
+                output.Append((char)39);
+            }
+            return output.ToString();
+        }
+
+        public static string ParseSpecialChar(string input)
+        {
+            if (input.Contains("@@")) { return input; }
+
+            foreach (KeyValuePair<string, char> rule in specialChars)
+            {
+                input = input.Replace(rule.Key, String.Empty + rule.Value);
+            }
+
+            /*while (input.Contains(@"\#"))
+            {
+                int index = input.IndexOf(@"\#") + 2;
+                if (index < input.Length)
+                {
+                    try
+                    {
+                        int num = Int32.Parse(input.Substring(index, input.IndexOf(' ', index) - index));
+                        if (num >= 128) { break; }
+                        input = input.Remove(index - 2, 2 + num.ToString().Length);
+                        input = input.Insert(index - 2, "" + (char)num);
+                    }
+                    catch
+                    {
+                        input = input.Remove(index - 2, 3);
+                    }
+                }
+                else
+                {
+                    input = input.Remove(index - 2, 2);
+                }
+                
+            }*/
+
+            return input;
+        }
+
+        public static string ParseColors(string message)
+        {
+            StringBuilder output = new StringBuilder();
+            for (int i = 0; i < message.Length; i++)
+            {
+                char ch = message[i];
+                if (ch == '%' && i + 1 < message.Length && "0123456789abcdef".Contains(message[i + 1].ToString()) && i + 2 < message.Length)
+                {
+                    ch = '&';
+                }
+                output.Append(ch);
+            }
+            return output.ToString();
+        }
+        
         public static List<string> SplitLines(string message)
         {
             List<string> lines = new List<string>();

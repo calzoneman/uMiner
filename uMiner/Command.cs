@@ -22,6 +22,7 @@ namespace uMiner
         public static void Init()
         {
             commands.Add("ban", new Command(DisconnectCommand.Ban, Rank.RankLevel("operator")));
+            commands.Add("chars", new Command(ColorCommand.Chars, Rank.RankLevel("guest")));
             commands.Add("colors", new Command(ColorCommand.Colors, Rank.RankLevel("operator")));
             commands.Add("fetch", new Command(TeleportCommand.Fetch, Rank.RankLevel("operator")));
             commands.Add("guest", new Command(ChangeRankCommand.Guest, Rank.RankLevel("operator")));
@@ -43,6 +44,7 @@ namespace uMiner
             commands.Add("who", new Command(WhoCommand.Who, Rank.RankLevel("player")));
 
             consoleSafe.Add("ban",      commands["ban"]);
+            consoleSafe.Add("chars",    commands["chars"]);
             consoleSafe.Add("colors",   commands["colors"]);
             consoleSafe.Add("guest",    commands["guest"]);
             consoleSafe.Add("help",     commands["help"]);
@@ -69,8 +71,9 @@ namespace uMiner
                     p.SendMessage(0xFF, "You can't use that command!");
                     return;
                 }
-                commands[cmd].handler(p, msg);
                 Program.server.logger.log(p.username + " uses /" + cmd);
+                commands[cmd].handler(p, msg);
+                
             }
             else
             {
@@ -82,6 +85,7 @@ namespace uMiner
         {
             switch (cmd)
             {
+                case "chars":
                 case "colors":
                     ColorCommand.Help(p, cmd);
                     break;

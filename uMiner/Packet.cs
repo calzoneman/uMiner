@@ -59,8 +59,7 @@ namespace uMiner
 
         public void Append(string data)
         {
-            Encoding.UTF8.GetBytes(data.PadRight(64).Substring(0, 64)).CopyTo(raw, currentIndex);
-            currentIndex += 64;
+            Append(Encoding.UTF8.GetBytes(data.PadRight(64).Substring(0, 64)));
         }
 
         public void Append(byte[] data)
@@ -68,6 +67,7 @@ namespace uMiner
             data.CopyTo(raw, currentIndex);
             currentIndex += data.Length;
         }
+
     }
 
     public enum ClientPacket //Client packet opcodes
