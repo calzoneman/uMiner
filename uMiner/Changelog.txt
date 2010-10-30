@@ -5,6 +5,14 @@
  * Licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License
  * (see http://creativecommons.org/licenses/by-sa/3.0/, or LICENSE.txt for a full license
  */
+ 
+ Revision 22
+ -----------
+ -Added private messages.  Standard @username format, but with autocomplete
+ -Added Player.GetFormattedName() - Returns Rank.GetColor(rank) + prefix + username
+ -Few fixes here and there
+ -New icon (thanks to Roasty)
+ -Sadly, special characters don't show up under Mono on Linux.  I will work on either fixing this or stripping these characters when on unix.
 
  Revision 21 - Special characters :D
  -----------

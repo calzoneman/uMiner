@@ -23,7 +23,7 @@ namespace uMiner
         {
             commands.Add("ban", new Command(DisconnectCommand.Ban, Rank.RankLevel("operator")));
             commands.Add("chars", new Command(ColorCommand.Chars, Rank.RankLevel("guest")));
-            commands.Add("colors", new Command(ColorCommand.Colors, Rank.RankLevel("operator")));
+            commands.Add("colors", new Command(ColorCommand.Colors, Rank.RankLevel("player")));
             commands.Add("fetch", new Command(TeleportCommand.Fetch, Rank.RankLevel("operator")));
             commands.Add("guest", new Command(ChangeRankCommand.Guest, Rank.RankLevel("operator")));
             commands.Add("help", new Command(HelpCommand.Help, Rank.RankLevel("guest")));
@@ -88,6 +88,9 @@ namespace uMiner
                 case "chars":
                 case "colors":
                     ColorCommand.Help(p, cmd);
+                    break;
+                case "commands":
+                    HelpCommand.Commands(p, cmd);
                     break;
                 case "fetch":
                 case "tp":

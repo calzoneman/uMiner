@@ -22,13 +22,19 @@ namespace uMiner
                 Command.HelpMessage(p, message.Trim());
                 return;
             }
-            p.SendMessage(0xFF, "Running uMiner Rev. &a" + Program.revision.ToString());
+            p.SendMessage(0xFF, "Running uMiner Rev. &a" + Program.revision.ToString() + "&e " + (char)1 + ".");
             p.SendMessage(0xFF, "---------------------");
             p.SendMessage(0xFF, "Global messages are enclosed in brackets [ ]");
             p.SendMessage(0xFF, "Visit &fhttp://github.com/calzoneman/uMiner&e for downloads and source code.");
             p.SendMessage(0xFF, "---------------------");
-            p.SendMessage(0xFF, "Type /help commandname for information about a specific command");
-            p.SendMessage(0xFF, "Type /ranks for information on ranks");
+            p.SendMessage(0xFF, "Type &5/help commands&e for information about available commands");
+            p.SendMessage(0xFF, "Type &5/help commandname&e for information about a specific command");
+            p.SendMessage(0xFF, "Type &5/ranks&e for information on ranks");
+
+        }
+
+        public static void Commands(Player p, string message)
+        {
             StringBuilder availableCmds = new StringBuilder();
             availableCmds.Append("Available commands:");
             foreach (KeyValuePair<string, Command> cmd in Command.commands)
@@ -41,7 +47,6 @@ namespace uMiner
                 }
             }
             p.SendMessage(0xFF, availableCmds.ToString());
-
         }
 
         public static void Ranks(Player p, string message)

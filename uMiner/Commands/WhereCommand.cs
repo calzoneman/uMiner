@@ -28,12 +28,12 @@ namespace uMiner
                 {
                     if (pl != null && pl.loggedIn && !pl.disconnected && pl.username.ToLower().Equals(message.Trim().ToLower()))
                     {
-                        p.SendMessage(0xFF, String.Format("-> " + Rank.GetColor(pl.rank) + pl.prefix + pl.username + "&e X: {0}, Y: {1}, Z: {2}", pl.x/32, pl.y/32, pl.z/32));
+                        p.SendMessage(0xFF, String.Format("-> " + pl.GetFormattedName() + "&e X: {0}, Y: {1}, Z: {2}", pl.x/32, pl.y/32, pl.z/32));
                         return;
                     }
                     else if (pl != null && pl.loggedIn && !pl.disconnected && pl.username.Substring(0, message.Length).ToLower().Equals(message.ToLower().Trim()))
                     {
-                        p.SendMessage(0xFF, String.Format("-> " + Rank.GetColor(pl.rank) + pl.prefix + pl.username + "&e X: {0}, Y: {1}, Z: {2}", pl.x / 32, pl.y / 32, pl.z / 32));
+                        p.SendMessage(0xFF, String.Format("-> " + pl.GetFormattedName() + "&e X: {0}, Y: {1}, Z: {2}", pl.x / 32, pl.y / 32, pl.z / 32));
                         found = true;
                     }
                 }

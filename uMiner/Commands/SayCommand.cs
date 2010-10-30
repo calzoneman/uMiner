@@ -30,7 +30,7 @@ namespace uMiner
                 finalMsg.Append(ch);
             }
             finalMsg.Append("&e");
-            Player.GlobalMessage(Player.Sanitize(finalMsg.ToString()));
+            Player.GlobalMessage(finalMsg.ToString());
         }
 
         public static void Help(Player p)

@@ -194,6 +194,11 @@ namespace uMiner
             }
         }
 
+        public string GetFormattedName()
+        {
+            return Rank.GetColor(this.rank) + this.prefix + this.username;
+        }
+
 
         #region Received Data
         public void Login()
@@ -376,10 +381,23 @@ namespace uMiner
                 return;
             }
 
+            //Test for PMs
+            if (!rawmsg.Trim().Equals("") && rawmsg.Trim()[0] == '@' && rawmsg.Trim().Contains(" "))
+            {
+                string tname = rawmsg.Trim().Substring(1, rawmsg.IndexOf(" ") - 1);
+                Player target = FindPlayer(this, tname, false);
+                if (target != null)
+                {
+                    target.SendMessage(0x00, Rank.GetColor(this.rank) + "(" + this.prefix + this.username + ")&e " + (char)26 + "&f " + rawmsg.Substring(rawmsg.IndexOf(" ") + 1));
+                    this.SendMessage(0x00, Rank.GetColor(target.rank) + "(" + target.prefix + target.username + ")&e " + (char)27 + "&f " + rawmsg.Substring(rawmsg.IndexOf(" ") + 1));
+                }
+                return;
+            }
+
             string message = "";
             message = Rank.GetColor(rank) + "<" + prefix + username + "> &f" + rawmsg;
-            if (rank >= Rank.RankLevel("player")) { message = ParseColors(message); }
-            Program.server.logger.log(Sanitize(message), Logger.LogType.Chat);
+            if (rank >= Rank.RankLevel("player") && !message.Contains("@@")) { message = ParseColors(message); }
+            Program.server.logger.log(message, Logger.LogType.Chat);
 
             foreach (Player p in Program.server.playerlist)
             {
@@ -499,7 +517,7 @@ namespace uMiner
                 Program.server.logger.log("Player " + username + " kicked (" + reason + ")");
                 if (!silent)
                 {
-                    GlobalMessage("Player " + Rank.GetColor(rank) + prefix + username + "&e kicked (" + reason + ")");
+                    GlobalMessage("Player " + GetFormattedName() + "&e kicked (" + reason + ")");
                 }
                 Disconnect(silent);
             }
@@ -794,7 +812,7 @@ namespace uMiner
             this.disconnected = true;
             if (!silent)
             {
-                GlobalMessage(Rank.GetColor(rank) + prefix + username + "&e disconnected.");
+                GlobalMessage(GetFormattedName() + "&e disconnected.");
                 foreach (Player pl in Program.server.playerlist)
                 {
                     if (pl != null && pl.loggedIn)
@@ -976,7 +994,7 @@ namespace uMiner
                 }
                 else if (pl != null && pl.loggedIn && pl.username.Length > name.Length && pl.username.Substring(0, name.Length).ToLower().Equals(name.ToLower()))
                 {
-                    from.SendMessage(0xFF, "-> " + Rank.GetColor(pl.rank) + pl.prefix + pl.username);
+                    from.SendMessage(0xFF, "-> " + pl.GetFormattedName());
                     possible.Add(pl);
                 }
             }

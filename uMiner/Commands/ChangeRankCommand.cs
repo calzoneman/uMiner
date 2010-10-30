@@ -106,11 +106,11 @@ namespace uMiner
                         }
                     }
                     uMiner.Player.GlobalSpawnPlayer(pl);
-                    uMiner.Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e set " + Rank.GetColor(pl.rank) + pl.prefix + pl.username + "&e's rank to " + Rank.GetColor(newrank) + Rank.RankName(newrank) + "&e");
+                    uMiner.Player.GlobalMessage(p.GetFormattedName() + "&e set " + pl.GetFormattedName() + "&e's rank to " + Rank.GetColor(newrank) + Rank.RankName(newrank) + "&e");
                 }
                 else
                 {
-                    p.SendMessage(0xFF, "Player " + Rank.GetColor(pl.rank) + pl.prefix + pl.username + "&e cannot have rank set to " + Rank.GetColor(newrank) + Rank.RankName(newrank));
+                    p.SendMessage(0xFF, "Player " + pl.GetFormattedName() + "&e cannot have rank set to " + Rank.GetColor(newrank) + Rank.RankName(newrank));
                 }
                 return;
             }

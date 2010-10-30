@@ -27,7 +27,7 @@ namespace uMiner
             if (pl != null)
             {
                 p.SendSpawn(new short[3] { pl.x, pl.y, pl.z }, new byte[2] { 0, 0 });
-                p.SendMessage(0xFF, "Teleported to " + Rank.GetColor(pl.rank) + pl.prefix + pl.username);
+                p.SendMessage(0xFF, "Teleported to " + pl.GetFormattedName());
                 return;
             }
 
@@ -45,7 +45,7 @@ namespace uMiner
             if (pl != null)
             {
                 pl.SendSpawn(new short[3] { p.x, p.y, p.z }, new byte[2] { 0, 0 });
-                pl.SendMessage(0xFF, "Fetched by " + Rank.GetColor(p.rank) + p.prefix + p.username);
+                pl.SendMessage(0xFF, "Fetched by " + p.GetFormattedName());
                 return;
             }
                 

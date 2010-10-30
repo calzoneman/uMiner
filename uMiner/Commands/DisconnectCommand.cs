@@ -23,7 +23,7 @@ namespace uMiner
                 Player pl = Player.FindPlayer(p, message.Trim(), false);
                 if (pl != null && (pl.rank <= p.rank || p.username.Equals("[console]")))
                 {
-                    pl.Kick("Kicked by " + Rank.GetColor(p.rank) + p.prefix + p.username + "&e", false);
+                    pl.Kick("Kicked by " + p.username + "&e", false);
                 }
                 else if(pl != null && pl.rank > p.rank)
                 {
@@ -61,7 +61,7 @@ namespace uMiner
                 if (pl != null && (pl.rank < p.rank || p.username.Equals("[console]")))
                 {
                     ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
-                    Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e banned " + pl.username);
+                    Player.GlobalMessage(p.GetFormattedName() + "&e banned " + pl.username);
                     return;
                 }
                 else if (pl != null && pl.rank >= p.rank)
@@ -82,7 +82,7 @@ namespace uMiner
                 if (pl != null && (pl.rank < p.rank || p.username.Equals("[console]")))
                 {
                     ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
-                    Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e banned " + pl.username + " (" + reason + ")");
+                    Player.GlobalMessage(p.GetFormattedName() + "&e banned " + pl.username + " (" + reason + ")");
                 }
                 else if (pl.rank >= p.rank)
                 {
@@ -112,7 +112,7 @@ namespace uMiner
                 Program.server.saveRanks();
             }
 
-            Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e unbanned " + message);
+            Player.GlobalMessage(p.GetFormattedName() + "&e unbanned " + message);
         }
 
         public static void IpBan(Player p, string message)
@@ -130,7 +130,7 @@ namespace uMiner
                     ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
                     Program.server.ipbanned.Add(pl.ip);
                     Program.server.saveIpBans();
-                    Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e ipbanned " + pl.username);
+                    Player.GlobalMessage(p.GetFormattedName() + "&e ipbanned " + pl.username);
                     return;
                 }
                 else if (pl != null && pl.rank >= p.rank)
@@ -153,7 +153,7 @@ namespace uMiner
                     ChangeRankCommand.Base(p, pl.username, Rank.RankLevel("none"));
                     Program.server.ipbanned.Add(pl.ip);
                     Program.server.saveIpBans();
-                    Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e ipbanned " + pl.username + " (" + reason + ")");
+                    Player.GlobalMessage(p.GetFormattedName() + "&e ipbanned " + pl.username + " (" + reason + ")");
                     return;
                 }
                 else if (pl.rank >= p.rank || pl.ip.Equals("127.0.0.1"))
@@ -184,7 +184,7 @@ namespace uMiner
                 }
             }
 
-            Player.GlobalMessage(Rank.GetColor(p.rank) + p.prefix + p.username + "&e unipbanned " + message);
+            Player.GlobalMessage(p.GetFormattedName() + "&e unipbanned " + message);
         }
 
         public static void Help(Player p, string cmd)
