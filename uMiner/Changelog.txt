@@ -6,6 +6,14 @@
  * (see http://creativecommons.org/licenses/by-sa/3.0/, or LICENSE.txt for a full license
  */
  
+ Revision 23
+ -----------
+ -World saving now only converts custom blocks if you specify them in the switch() case
+ -Updated icon.  Again, thanks to Roasty :D
+ -Special characters should now be replaced by "(SC)" on unix.
+ -Added /me
+ -/ban now allows you to ban offline players (no autocomplete though)
+ 
  Revision 22
  -----------
  -Added private messages.  Standard @username format, but with autocomplete

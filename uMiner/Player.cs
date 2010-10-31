@@ -382,7 +382,7 @@ namespace uMiner
             }
 
             //Test for PMs
-            if (!rawmsg.Trim().Equals("") && rawmsg.Trim()[0] == '@' && rawmsg.Trim().Contains(" "))
+            if (!rawmsg.Trim().Equals("") && rawmsg.Trim()[0] == '@' && rawmsg.Trim()[1] != '@' && rawmsg.Trim().Contains(" "))
             {
                 string tname = rawmsg.Trim().Substring(1, rawmsg.IndexOf(" ") - 1);
                 Player target = FindPlayer(this, tname, false);

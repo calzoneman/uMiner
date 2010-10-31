@@ -31,6 +31,10 @@ namespace uMiner
         {
             lock (mutex)
             {
+                if (System.Environment.OSVersion.Platform == PlatformID.Unix)
+                {
+                    data = StripSpecialChars(data);
+                }
                 string display = "[" + DateTime.Now.ToString() + "]" + "[" + type.ToString() + "] " + StripColor(data);
                 buffer.Add(display);
                 logToConsole(data, type);
@@ -108,6 +112,23 @@ namespace uMiner
             {
                 Console.WriteLine(StripColor(data));
             }
+        }
+
+        public static string StripSpecialChars(string input)
+        {
+            string output = String.Empty;
+            for (int i = 0; i < input.Length; i++)
+            {
+                if ((int)input[i] < 32)
+                {
+                    output += "(SC)";
+                }
+                else
+                {
+                    output += input[i];
+                }
+            }
+            return output;
         }
 
         public static void WriteLineColor(string line, bool defaultYellow)

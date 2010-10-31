@@ -29,6 +29,7 @@ namespace uMiner
             commands.Add("help", new Command(HelpCommand.Help, Rank.RankLevel("guest")));
             commands.Add("ipban", new Command(DisconnectCommand.IpBan, Rank.RankLevel("operator")));
             commands.Add("kick", new Command(DisconnectCommand.Kick, Rank.RankLevel("operator")));
+            commands.Add("me", new Command(MeCommand.Me, Rank.RankLevel("guest")));
             commands.Add("newworld", new Command(WorldCommand.NewWorld, Rank.RankLevel("owner")));
             commands.Add("operator", new Command(ChangeRankCommand.Operator, Rank.RankLevel("owner")));
             commands.Add("place", new Command(PlaceCommand.Place, Rank.RankLevel("player")));
@@ -50,6 +51,7 @@ namespace uMiner
             consoleSafe.Add("help",     commands["help"]);
             consoleSafe.Add("ipban",    commands["ipban"]);
             consoleSafe.Add("kick",     commands["kick"]);
+            consoleSafe.Add("me",       commands["me"]);
             consoleSafe.Add("newworld", commands["newworld"]);
             consoleSafe.Add("owner",    new Command(ChangeRankCommand.Owner, Rank.RankLevel("owner")));
             consoleSafe.Add("operator", commands["operator"]);

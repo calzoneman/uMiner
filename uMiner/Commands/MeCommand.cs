@@ -6,26 +6,25 @@
  * (see http://creativecommons.org/licenses/by-sa/3.0/, or LICENSE.txt for a full license
  */
 
-
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace uMiner
 {
-    public class Program
+    public class MeCommand
     {
-        public static Server server = new Server(ServerType.ClassicBuild);
-        public const int revision = 23;
-        static void Main(string[] args)
+        public static void Me(Player p, string message)
         {
-            server.Init();
-            server.Run();
+            if (!message.Trim().Equals(""))
+            {
+                Player.GlobalMessage("* " + p.GetFormattedName() + "&e " + message);
+            }
         }
-    }
 
-    public enum ServerType
-    {
-        ClassicBuild
+        public static void Help(Player p)
+        {
+            p.SendMessage(0xFF, "/me action - Displays a roleplaying action");
+        }
     }
 }

@@ -120,7 +120,14 @@ namespace uMiner
                 blocks.CopyTo(saveblocks, 0);
                 for (int i = 0; i < saveblocks.Length; i++)
                 {
-                    saveblocks[i] = Blocks.ConvertType(saveblocks[i]);
+                    switch (saveblocks[i])
+                    {
+                        case Blocks.unflood:
+                            saveblocks[i] = Blocks.ConvertType(saveblocks[i]);
+                            break;
+                        default:
+                            break;
+                    }
                 }
 
                 GZipStream gzout = new GZipStream(new FileStream("maps/" + filename, FileMode.OpenOrCreate), CompressionMode.Compress);

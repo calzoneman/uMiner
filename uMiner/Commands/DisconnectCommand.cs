@@ -68,6 +68,12 @@ namespace uMiner
                 {
                     p.SendMessage(0xFF, "You can't ban that person!");
                 }
+                else if (pl == null && Program.server.playerRanksDict.ContainsKey(message.Trim().ToLower()))
+                {
+                    Program.server.playerRanksDict[message.Trim().ToLower()] = Rank.RankLevel("none");
+                    Program.server.saveRanks();
+                    Player.GlobalMessage(p.GetFormattedName() + "&e banned " + message.Trim() + "&f(offline)");
+                }
             }
             else
             {
