@@ -6,6 +6,13 @@
  * (see http://creativecommons.org/licenses/by-sa/3.0/, or LICENSE.txt for a full license
  */
  
+ Revision 24
+ -----------
+ -Added sand and gravel physics
+ -Added .dat -> .umw converter
+ -(Notice)Readying a release of uMiner basic
+ -(Notice)Going to fork uMiner and start uBuilder, a build server.
+ 
  Revision 23
  -----------
  -World saving now only converts custom blocks if you specify them in the switch() case

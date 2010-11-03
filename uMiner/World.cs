@@ -84,14 +84,21 @@ namespace uMiner
             {
                 return false;
             }
+            //Handle basic physics tiles
             if (Blocks.BasicPhysics(type))
             {
+                /*if (Blocks.AffectedByGravity(type))
+                {
+                    Program.server.physics.SandGravelFall(x, y, z, type);
+                    return true;
+                }
                 if (Blocks.AffectedBySponges(type) && Program.server.physics.FindSponge(x, y, z))
                 {
                     return false;
-                }
+                }*/
                 Program.server.physics.Queue(x, y, z, type);
             }
+            //Handle sponge deletion
             if (GetTile(x, y, z) == Blocks.sponge && type == 0)
             {
                 Program.server.physics.DeleteSponge(x, y, z);

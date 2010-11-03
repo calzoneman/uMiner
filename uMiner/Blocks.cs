@@ -166,6 +166,8 @@ namespace uMiner
                 case sponge:
                 case staircasestep:
                 case unflood:
+                case sand:
+                case gravel:
                     return true;
                 default:
                     return false;
@@ -199,6 +201,18 @@ namespace uMiner
                     {
                         return false;
                     }
+                default:
+                    return false;
+            }
+        }
+
+        public static bool AffectedByGravity(byte type)
+        {
+            switch (type)
+            {
+                case sand:
+                case gravel:
+                    return true;
                 default:
                     return false;
             }

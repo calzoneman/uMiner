@@ -104,7 +104,7 @@ namespace uMiner
             else
             {
                 world = new World(worldPath);
-                world.Save();
+                //world.Save();
             }
             worldSaveTimer = new System.Timers.Timer(60000.0);
             worldSaveTimer.Elapsed += new System.Timers.ElapsedEventHandler(delegate

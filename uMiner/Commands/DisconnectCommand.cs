@@ -72,7 +72,7 @@ namespace uMiner
                 {
                     Program.server.playerRanksDict[message.Trim().ToLower()] = Rank.RankLevel("none");
                     Program.server.saveRanks();
-                    Player.GlobalMessage(p.GetFormattedName() + "&e banned " + message.Trim() + "&f(offline)");
+                    Player.GlobalMessage(p.GetFormattedName() + "&e banned " + message.Trim() + "&f(offline)&e");
                 }
             }
             else

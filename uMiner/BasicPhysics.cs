@@ -64,8 +64,12 @@ namespace uMiner
                                 break;
                             case Blocks.staircasestep:
                                 Staircase(block);
-                                break;
+                                break;    
                             default:
+                                if (Blocks.AffectedByGravity(block.type))
+                                {
+                                    SandGravelFall(block.x, block.y, block.z, block.type);
+                                }
                                 break;
                         }
                     }
@@ -284,6 +288,14 @@ namespace uMiner
             }
         }
 
+        public void AirCheckGravity(int x, int y, int z)
+        {
+            if (Blocks.AffectedByGravity(world.GetTile(x, y + 1, z)) && world.GetTile(x, y + 1, z) != Blocks.air)
+            {
+                SandGravelFall(x, y + 1, z, world.GetTile(x, y + 1, z));
+            }
+        }
+
         public void Staircase(PhysicsBlock block)
         {
             if (world.GetTile(block.x, block.y, block.z) != block.type) { return; }
@@ -294,6 +306,27 @@ namespace uMiner
                 world.SetTile(block.x, block.y, block.z, Blocks.air);
             }
         }
+
+        public void SandGravelFall(int x, int y, int z, byte type)
+        {
+            if (world.GetTile(x, y, z) != type)
+            {
+                return;
+            }
+
+            int dy = y;
+            while (dy > 0 && world.GetTile(x, dy - 1, z) == Blocks.air)
+            {
+                dy--;
+            }
+            if (dy != y)
+            {
+                world.SetTile(x, y, z, Blocks.air);
+                world.SetTileNoPhysics(x, dy, z, type);
+            }
+            
+        }
+
         #endregion
 
         public bool LavaWaterCollide(byte a, byte b)
