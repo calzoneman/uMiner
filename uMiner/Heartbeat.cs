@@ -54,14 +54,22 @@ namespace uMiner
                 catch (WebException)
                 {
                     Program.server.logger.log("Unable to make heartbeat", Logger.LogType.Warning);
-                    Program.server.verify_names = false;
+                    if (initial)
+                    {
+                        Program.server.verify_names = false;
+                        Program.server.logger.log("Initial heartbeat failed.  Turning verify-names off");
+                    }
                     return false;
                 }
                 catch (Exception e)
                 {
                     Program.server.logger.log("Error occurred during heartbeat: ", Logger.LogType.Error);
                     Program.server.logger.log(e);
-                    Program.server.verify_names = false;
+                    if (initial)
+                    {
+                        Program.server.verify_names = false;
+                        Program.server.logger.log("Initial heartbeat failed.  Turning verify-names off");
+                    }
                     return false;
                 }
                 return true;

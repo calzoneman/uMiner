@@ -221,9 +221,9 @@ namespace uMiner
             this.username = Encoding.ASCII.GetString(this.inputReader.ReadBytes(64)).Trim();
 
             //Verify the name
+            string mppass = Encoding.ASCII.GetString(this.inputReader.ReadBytes(64)).Trim();
             if (Program.server.verify_names)
             {
-                string mppass = Encoding.ASCII.GetString(this.inputReader.ReadBytes(64)).Trim();
                 while (mppass.Length < 32) { mppass = "0" + mppass; }
                 MD5 hasher = new MD5CryptoServiceProvider();
                 byte[] cmpHash = hasher.ComputeHash(Encoding.ASCII.GetBytes(Program.server.salt + username));

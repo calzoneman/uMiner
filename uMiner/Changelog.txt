@@ -6,6 +6,13 @@
  * (see http://creativecommons.org/licenses/by-sa/3.0/, or LICENSE.txt for a full license
  */
  
+ Revision 25
+ -----------
+ -Fixed heartbeat failures disabling verify-names.  Now verify-names is only turned off
+ if the initial heartbeat fails
+ -Fixed players getting kicked if verify-names is false
+ -Logger now only displays the date if it changes or the server is restarted.
+ 
  Revision 24
  -----------
  -Added sand and gravel physics

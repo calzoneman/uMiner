@@ -3,9 +3,9 @@ C:\Users\DealTree\AppData\Local\Temporary Projects\uMiner\bin\Release\uMiner.pdb
 C:\Users\DealTree\AppData\Local\Temporary Projects\uMiner\obj\Release\ResolveAssemblyReference.cache
 C:\Users\DealTree\AppData\Local\Temporary Projects\uMiner\obj\Release\uMiner.exe
 C:\Users\DealTree\AppData\Local\Temporary Projects\uMiner\obj\Release\uMiner.pdb
+C:\Users\DealTree\Documents\Visual Studio 2008\Projects\uMiner\uMiner\obj\Release\ResolveAssemblyReference.cache
+C:\Users\DealTree\Documents\Visual Studio 2008\Projects\uMiner\uMiner\bin\Release\uMiner.exe.config
 C:\Users\DealTree\Documents\Visual Studio 2008\Projects\uMiner\uMiner\bin\Release\uMiner.exe
 C:\Users\DealTree\Documents\Visual Studio 2008\Projects\uMiner\uMiner\bin\Release\uMiner.pdb
-C:\Users\DealTree\Documents\Visual Studio 2008\Projects\uMiner\uMiner\obj\Release\ResolveAssemblyReference.cache
 C:\Users\DealTree\Documents\Visual Studio 2008\Projects\uMiner\uMiner\obj\Release\uMiner.exe
 C:\Users\DealTree\Documents\Visual Studio 2008\Projects\uMiner\uMiner\obj\Release\uMiner.pdb
-C:\Users\DealTree\Documents\Visual Studio 2008\Projects\uMiner\uMiner\bin\Release\uMiner.exe.config

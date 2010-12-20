@@ -17,8 +17,9 @@ namespace uMiner
     public class Logger
     {
         public string filename = "server.log";
-        public List<string> buffer = new List<string>();
         public bool logWithColor = false;
+        public string dateString = "";
+        public bool dateChanged = true;
 
         public object mutex = new object();
 
@@ -35,8 +36,13 @@ namespace uMiner
                 {
                     data = StripSpecialChars(data);
                 }
-                string display = "[" + DateTime.Now.ToString() + "]" + "[" + type.ToString() + "] " + StripColor(data);
-                buffer.Add(display);
+                string display = "[" + DateTime.Now.ToShortTimeString() + "]" + "[" + type.ToString() + "] " + StripColor(data);
+                if (!DateTime.Now.ToShortDateString().Equals(dateString))
+                {
+                    display = "[" + DateTime.Now.ToShortDateString() + "]\n" + display;
+                    dateString = DateTime.Now.ToShortDateString();
+                    dateChanged = true;
+                }
                 logToConsole(data, type);
                 try
                 {
@@ -48,10 +54,6 @@ namespace uMiner
                 {
                     Console.WriteLine("[" + DateTime.Now.ToString() + "]" + "[ERROR] Failed to write to logfile!");
                     Console.WriteLine("Exception: " + e.ToString());
-                }
-                if (buffer.Count > 64)
-                {
-                    buffer.Clear();
                 }
             }
         }
@@ -69,7 +71,8 @@ namespace uMiner
 
         public void logToConsole(string data, LogType type)
         {
-            Console.Write("[" + DateTime.Now.ToString() + "]");
+            if (dateChanged) Console.WriteLine("[" + dateString + "]"); dateChanged = false;
+            Console.Write("[" + DateTime.Now.ToShortTimeString() + "]");
             switch (type)
             {
                 case LogType.Info:
@@ -80,6 +83,11 @@ namespace uMiner
                     break;
                 case LogType.CCmd:
                     Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("[" + type.ToString() + "] ");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    break;
+                case LogType.Debug:
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.Write("[" + type.ToString() + "] ");
                     Console.ForegroundColor = ConsoleColor.Gray;
                     break;
@@ -250,7 +258,8 @@ namespace uMiner
             Warning,
             Error,
             Chat,
-            CCmd
+            CCmd,
+            Debug
         }
     }
 }
