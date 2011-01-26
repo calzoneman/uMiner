@@ -29,15 +29,11 @@ namespace uMiner
             {
                 try
                 {
-                    HttpWebRequest beatRequest = (HttpWebRequest)WebRequest.Create(new Uri("http://minecraft.net/heartbeat.jsp"));
                     string args = "port=" + Program.server.port + "&max=" + Program.server.maxPlayers + "&name=" + Uri.EscapeUriString(Program.server.serverName) + "&public=" + Program.server.isPublic.ToString() + "&version=" + Protocol.version + "&salt=" + Program.server.salt + "&users=" + Program.server.plyCount;
-                    beatRequest.Method = "POST";
+                    HttpWebRequest beatRequest = (HttpWebRequest)WebRequest.Create(new Uri("http://minecraft.net/heartbeat.jsp?" + args));
+                    beatRequest.Method = "GET";
                     beatRequest.ContentType = "application/x-www-form-urlencoded";
                     beatRequest.ContentLength = args.Length;
-                    using (Stream rStream = beatRequest.GetRequestStream())
-                    {
-                        rStream.Write(Encoding.ASCII.GetBytes(args), 0, args.Length);
-                    }
                     using (Stream responseStream = beatRequest.GetResponse().GetResponseStream())
                     {
                         byte[] responseBytes = new byte[73]; //URL should be 73 characters long

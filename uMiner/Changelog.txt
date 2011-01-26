@@ -6,6 +6,10 @@
  * (see http://creativecommons.org/licenses/by-sa/3.0/, or LICENSE.txt for a full license
  */
  
+ Revision 26
+ -----------
+ -Notch's heartbeat server no longer accepts heartbeat requests using the POST method.  Switched to GET.
+ 
  Revision 25
  -----------
  -Fixed heartbeat failures disabling verify-names.  Now verify-names is only turned off
