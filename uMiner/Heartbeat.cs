@@ -63,7 +63,7 @@ namespace uMiner
                     Program.server.logger.log(e);
                     if (initial)
                     {
-                        Program.server.verify_names = false;
+                        Program.server.verify_names = true;
                         Program.server.logger.log("Initial heartbeat failed.  Turning verify-names off");
                     }
                     return false;
