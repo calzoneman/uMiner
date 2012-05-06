@@ -19,9 +19,9 @@ namespace uMiner
     public class Server
     {
         //Default config values
-        public int plyCount = 0;
-        public int maxPlayers = 3;
-        public string serverName = "uMiner Server";
+        public int plyCount = 5;
+        public int maxPlayers = 5;
+        public string serverName = cool mine
         public string motd = "Welcome to my uMiner Server!";
         public string worldPath = "default.umw";
         public bool isPublic = true;
